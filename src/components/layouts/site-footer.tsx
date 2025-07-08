@@ -81,44 +81,44 @@ const Footer7 = ({
   legalLinks = defaultLegalLinks,
 }: Footer7Props) => {
   return (
-    <section className="py-32">
-      <div className="container">
-        <div className="flex w-full flex-col justify-between gap-10 lg:flex-row lg:items-start lg:text-left">
-          <div className="flex w-full flex-col justify-between gap-6 lg:items-start">
+    <section className="w-full py-20 md:py-32 bg-muted/30">
+      <div className="container mx-auto px-4">
+        <div className="flex w-full flex-col justify-between gap-16 lg:flex-row lg:items-start lg:text-left max-w-7xl mx-auto">
+          <div className="flex w-full flex-col justify-between gap-8 lg:items-start lg:max-w-md">
             {/* Logo */}
-            <div className="flex items-center gap-2 lg:justify-start">
+            <div className="flex items-center gap-3 lg:justify-start">
               <a href={logo.url}>
                 <img
                   src={logo.src}
                   alt={logo.alt}
                   title={logo.title}
-                  className="h-8"
+                  className="h-10 w-10"
                 />
               </a>
-              <h2 className="text-xl font-semibold">{logo.title}</h2>
+              <h2 className="text-2xl font-bold">{logo.title}</h2>
             </div>
-            <p className="text-muted-foreground max-w-[70%] text-sm">
+            <p className="text-muted-foreground text-base leading-relaxed">
               {description}
             </p>
-            <ul className="text-muted-foreground flex items-center space-x-6">
+            <ul className="text-muted-foreground flex items-center space-x-8">
               {socialLinks.map((social, idx) => (
-                <li key={idx} className="hover:text-primary font-medium">
-                  <a href={social.href} aria-label={social.label}>
+                <li key={idx} className="hover:text-primary font-medium transition-colors">
+                  <a href={social.href} aria-label={social.label} className="block p-2">
                     {social.icon}
                   </a>
                 </li>
               ))}
             </ul>
           </div>
-          <div className="grid w-full gap-6 md:grid-cols-3 lg:gap-20">
+          <div className="grid w-full gap-8 md:gap-12 sm:grid-cols-1 md:grid-cols-3 lg:gap-16">
             {sections.map((section, sectionIdx) => (
               <div key={sectionIdx}>
-                <h3 className="mb-4 font-bold">{section.title}</h3>
-                <ul className="text-muted-foreground space-y-3 text-sm">
+                <h3 className="mb-6 text-lg font-bold">{section.title}</h3>
+                <ul className="text-muted-foreground space-y-4 text-sm">
                   {section.links.map((link, linkIdx) => (
                     <li
                       key={linkIdx}
-                      className="hover:text-primary font-medium"
+                      className="hover:text-primary font-medium transition-colors"
                     >
                       <a href={link.href}>{link.name}</a>
                     </li>
@@ -128,12 +128,12 @@ const Footer7 = ({
             ))}
           </div>
         </div>
-        <div className="text-muted-foreground mt-8 flex flex-col justify-between gap-4 border-t py-8 text-xs font-medium md:flex-row md:items-center md:text-left">
+        <div className="text-muted-foreground mt-12 flex flex-col justify-between gap-6 border-t pt-8 text-sm font-medium md:flex-row md:items-center md:text-left max-w-7xl mx-auto">
           <p className="order-2 lg:order-1">{copyright}</p>
-          <ul className="order-1 flex flex-col gap-2 md:order-2 md:flex-row">
+          <ul className="order-1 flex flex-col gap-4 md:order-2 md:flex-row md:gap-8">
             {legalLinks.map((link, idx) => (
-              <li key={idx} className="hover:text-primary">
-                <a href={link.href}> {link.name}</a>
+              <li key={idx} className="hover:text-primary transition-colors">
+                <a href={link.href}>{link.name}</a>
               </li>
             ))}
           </ul>

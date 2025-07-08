@@ -24,19 +24,19 @@ const Testimonial10 = ({
   },
 }: Testimonial10Props) => {
   return (
-    <section className="py-32">
-      <div className="container">
-        <div className="flex flex-col items-center text-center">
-          <p className="mb-16 max-w-4xl px-8 font-medium lg:text-3xl">
+    <section className="w-full py-20 md:py-32 bg-muted/20">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
+          <p className="mb-16 md:mb-20 font-medium text-lg md:text-2xl lg:text-3xl leading-relaxed">
             &ldquo;{quote}&rdquo;
           </p>
-          <div className="flex items-center gap-2 md:gap-4">
-            <Avatar className="size-12 md:size-16">
+          <div className="flex items-center gap-4 md:gap-6">
+            <Avatar className="size-16 md:size-20 border-2 border-primary/20">
               <AvatarImage src={author.avatar.src} alt={author.avatar.alt} />
-              <AvatarFallback>{author.name}</AvatarFallback>
+              <AvatarFallback className="text-lg font-bold">{author.name}</AvatarFallback>
             </Avatar>
             <div className="text-left">
-              <p className="text-sm font-medium md:text-base">{author.name}</p>
+              <p className="text-base md:text-lg font-bold">{author.name}</p>
               <p className="text-muted-foreground text-sm md:text-base">
                 {author.role}
               </p>

@@ -26,25 +26,25 @@ const Cta10 = ({
   },
 }: Cta10Props) => {
   return (
-    <section className="py-32">
-      <div className="container">
-        <div className="bg-accent flex w-full flex-col gap-16 overflow-hidden rounded-lg p-8 md:rounded-xl lg:flex-row lg:items-center lg:p-12">
+    <section className="w-full py-20 md:py-32">
+      <div className="container mx-auto px-4">
+        <div className="bg-gradient-to-r from-accent to-accent/80 flex w-full flex-col gap-8 overflow-hidden rounded-2xl p-8 md:gap-12 md:p-12 lg:flex-row lg:items-center lg:p-16 max-w-7xl mx-auto shadow-lg">
           <div className="flex-1">
-            <h3 className="mb-3 text-2xl font-semibold md:mb-4 md:text-4xl lg:mb-6">
+            <h3 className="mb-4 text-3xl font-bold md:mb-6 md:text-4xl lg:text-5xl lg:mb-8">
               {heading}
             </h3>
-            <p className="text-muted-foreground max-w-xl lg:text-lg">
+            <p className="text-muted-foreground text-lg md:text-xl lg:text-2xl leading-relaxed">
               {description}
             </p>
           </div>
-          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+          <div className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row">
             {buttons.secondary && (
-              <Button variant="outline" asChild>
+              <Button variant="outline" size="lg" asChild className="text-lg px-8 py-6">
                 <a href={buttons.secondary.url}>{buttons.secondary.text}</a>
               </Button>
             )}
             {buttons.primary && (
-              <Button asChild variant="default" size="lg">
+              <Button asChild variant="default" size="lg" className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
                 <a href={buttons.primary.url}>{buttons.primary.text}</a>
               </Button>
             )}

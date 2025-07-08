@@ -136,15 +136,15 @@ const Navbar1 = ({
   },
 }: Navbar1Props) => {
   return (
-    <section className="py-4">
-      <div className="container">
+    <section className="w-full py-4 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <div className="container mx-auto px-4">
         {/* Desktop Menu */}
-        <nav className="hidden justify-between lg:flex">
-          <div className="flex items-center gap-6">
+        <nav className="hidden justify-between lg:flex max-w-7xl mx-auto">
+          <div className="flex items-center gap-8">
             {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="max-h-8" alt={logo.alt} />
-              <span className="text-lg font-semibold tracking-tighter">
+            <a href={logo.url} className="flex items-center gap-3">
+              <img src={logo.src} className="h-8 w-8" alt={logo.alt} />
+              <span className="text-xl font-bold tracking-tight">
                 {logo.title}
               </span>
             </a>
@@ -156,11 +156,11 @@ const Navbar1 = ({
               </NavigationMenu>
             </div>
           </div>
-          <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
+          <div className="flex gap-3">
+            <Button asChild variant="outline" size="sm" className="font-medium">
               <a href={auth.login.url}>{auth.login.title}</a>
             </Button>
-            <Button asChild size="sm">
+            <Button asChild size="sm" className="font-medium">
               <a href={auth.signup.url}>{auth.signup.title}</a>
             </Button>
           </div>
@@ -170,8 +170,11 @@ const Navbar1 = ({
         <div className="block lg:hidden">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-2">
-              <img src={logo.src} className="max-h-8" alt={logo.alt} />
+            <a href={logo.url} className="flex items-center gap-3">
+              <img src={logo.src} className="h-8 w-8" alt={logo.alt} />
+              <span className="text-xl font-bold tracking-tight">
+                {logo.title}
+              </span>
             </a>
             <Sheet>
               <SheetTrigger asChild>
@@ -182,8 +185,9 @@ const Navbar1 = ({
               <SheetContent className="overflow-y-auto">
                 <SheetHeader>
                   <SheetTitle>
-                    <a href={logo.url} className="flex items-center gap-2">
-                      <img src={logo.src} className="max-h-8" alt={logo.alt} />
+                    <a href={logo.url} className="flex items-center gap-3">
+                      <img src={logo.src} className="h-8 w-8" alt={logo.alt} />
+                      <span className="text-lg font-bold">{logo.title}</span>
                     </a>
                   </SheetTitle>
                 </SheetHeader>
@@ -197,10 +201,10 @@ const Navbar1 = ({
                   </Accordion>
 
                   <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline">
+                    <Button asChild variant="outline" className="font-medium">
                       <a href={auth.login.url}>{auth.login.title}</a>
                     </Button>
-                    <Button asChild>
+                    <Button asChild className="font-medium">
                       <a href={auth.signup.url}>{auth.signup.title}</a>
                     </Button>
                   </div>
