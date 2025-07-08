@@ -1,6 +1,5 @@
 import { Navbar1 } from "~/components/layouts/main-nav";
 import { Footer7 } from "~/components/layouts/site-footer";
-import { ScrollProgress } from "~/components/magicui/scroll-progress";
 
 export default function MarketingLayout({
   children,
@@ -51,7 +50,6 @@ export default function MarketingLayout({
         }}
       />
       <main className="flex-1">{children}</main>
-      <ScrollProgress />
       <Footer7 
         logo={{
           url: "/",
@@ -86,7 +84,7 @@ export default function MarketingLayout({
             ],
           },
         ]}
-        copyright="© 2024 PuntoClaro. Todos los derechos reservados."
+        copyright="© 2025 PuntoClaro. Todos los derechos reservados."
       />
     </div>
   );

@@ -24,7 +24,7 @@ const Testimonial10 = ({
   },
 }: Testimonial10Props) => {
   return (
-    <section className="w-full py-20 md:py-32 bg-muted/20">
+    <section className="w-full py-24 md:py-36 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
           <p className="mb-16 md:mb-20 font-medium text-lg md:text-2xl lg:text-3xl leading-relaxed">

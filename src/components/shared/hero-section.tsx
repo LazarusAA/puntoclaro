@@ -1,12 +1,10 @@
 import { ExternalLink } from "lucide-react";
 
-import { cn } from "~/lib/utils";
-
-import { Button, buttonVariants } from "~/components/ui/button";
+import { Button } from "~/components/ui/button";
 
 const Hero12 = () => {
   return (
-    <section className="relative overflow-hidden py-32">
+    <section className="relative overflow-hidden py-20 md:py-30">
       <div className="absolute inset-x-0 top-0 flex h-full w-full items-center justify-center opacity-100">
         <img
           alt="background"
@@ -14,95 +12,34 @@ const Hero12 = () => {
           className="[mask-image:radial-gradient(75%_75%_at_center,white,transparent)] opacity-90"
         />
       </div>
-      <div className="relative z-10 container">
-        <div className="mx-auto flex max-w-5xl flex-col items-center">
+      <div className="relative z-10 w-full py-12 md:py-16">
+        <div className="container mx-auto px-4 lg:px-8 flex max-w-5xl flex-col items-center">
           <div className="flex flex-col items-center gap-6 text-center">
-            <div className="rounded-xl bg-background/30 p-4 shadow-sm backdrop-blur-sm">
+            <div>
               <img
-                src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/block-1.svg"
-                alt="logo"
-                className="h-16"
+                src="/horizontal-logo.svg"
+                alt="PuntoClaro Logo"
+                className="h-20 md:h-28 lg:h-32 w-auto object-contain"
               />
             </div>
             <div>
-              <h1 className="mb-6 text-2xl font-bold tracking-tight text-pretty lg:text-5xl">
-                Build your next project with{" "}
-                <span className="text-primary">Blocks</span>
+              <h1 className="mb-6 text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-pretty">
+                ¿La <span className="text-primary">jupa nublada</span> por el examen de admisión?
               </h1>
-              <p className="mx-auto max-w-3xl text-muted-foreground lg:text-xl">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Elig
-                doloremque mollitia fugiat omnis! Porro facilis quo animi
-                consequatur. Explicabo.
+              <p className="mx-auto max-w-2xl md:max-w-3xl text-lg md:text-xl text-muted-foreground leading-relaxed">
+                Deja de estudiar a ciegas. Descubre gratis en 90 segundos cuáles son las 3 áreas que de verdad necesitas mejorar para asegurar tu futuro con la PAA.
               </p>
             </div>
-            <div className="mt-6 flex justify-center gap-3">
-              <Button className="shadow-sm transition-shadow hover:shadow">
-                Get Started
+            <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4 items-center">
+              <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 shadow-sm hover:shadow transition-all hover:scale-105">
+                Empezar mi Diagnóstico GRATIS
               </Button>
-              <Button variant="outline" className="group">
-                Learn more{" "}
-                <ExternalLink className="ml-2 h-4 transition-transform group-hover:translate-x-0.5" />
+              <Button variant="outline" size="lg" asChild className="w-full sm:w-auto group text-lg px-8 py-6 flex items-center justify-center">
+                <a href="#problem-section" className="scroll-smooth">
+                  Ver cómo funciona{" "}
+                  <ExternalLink className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+                </a>
               </Button>
-            </div>
-            <div className="mt-20 flex flex-col items-center gap-5">
-              <p className="font-medium text-muted-foreground lg:text-left">
-                Built with open-source technologies
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <a
-                  href="#"
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "group flex aspect-square h-12 items-center justify-center p-0",
-                  )}
-                >
-                  <img
-                    src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcn-ui-icon.svg"
-                    alt="shadcn/ui logo"
-                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
-                  />
-                </a>
-                <a
-                  href="#"
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "group flex aspect-square h-12 items-center justify-center p-0",
-                  )}
-                >
-                  <img
-                    src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/typescript-icon.svg"
-                    alt="TypeScript logo"
-                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
-                  />
-                </a>
-
-                <a
-                  href="#"
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "group flex aspect-square h-12 items-center justify-center p-0",
-                  )}
-                >
-                  <img
-                    src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/react-icon.svg"
-                    alt="React logo"
-                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
-                  />
-                </a>
-                <a
-                  href="#"
-                  className={cn(
-                    buttonVariants({ variant: "outline" }),
-                    "group flex aspect-square h-12 items-center justify-center p-0",
-                  )}
-                >
-                  <img
-                    src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/tailwind-icon.svg"
-                    alt="Tailwind CSS logo"
-                    className="h-6 saturate-0 transition-all group-hover:saturate-100"
-                  />
-                </a>
-              </div>
             </div>
           </div>
         </div>

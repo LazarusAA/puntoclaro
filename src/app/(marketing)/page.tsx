@@ -1,52 +1,9 @@
-import { ExternalLink, Compass, Clock, Brain } from "lucide-react";
-import { Button } from "~/components/ui/button";
+import { Compass, Clock, Brain } from "lucide-react";
 import { Feature43 } from "~/components/shared/problem-section";
+import { Hero12 } from "~/components/shared/hero-section";
 import { SolutionSection } from "~/components/shared/solution-section";
 import { Testimonial10 } from "~/components/shared/testimonial-section";
 import { Cta10 } from "~/components/shared/call-to-action";
-
-// Custom Hero Section based on Hero12
-const HeroSection = () => {
-  return (
-    <section className="relative min-h-screen flex items-start justify-center overflow-hidden bg-gradient-to-b from-background to-muted/20 pt-20 md:pt-32">
-      <div className="absolute inset-0 flex items-center justify-center opacity-40">
-        <img
-          alt="background"
-          src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/patterns/square-alt-grid.svg"
-          className="h-full w-full object-cover [mask-image:radial-gradient(80%_80%_at_center,white,transparent)]"
-        />
-      </div>
-      <div className="relative z-10 w-full">
-        <div className="container mx-auto px-4 py-8">
-          <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-            <div className="rounded-xl bg-background/80 p-2 shadow-lg backdrop-blur-sm mb-8">
-              <img
-                src="/logo.svg"
-                alt="PuntoClaro Logo"
-                className="h-24 w-24 md:h-32 md:w-32 object-contain"
-              />
-            </div>
-            <h1 className="mb-6 text-3xl font-bold tracking-tight text-pretty md:text-5xl lg:text-6xl">
-              ¿La <span className="text-primary">jupa nublada</span> por el examen de admisión?
-            </h1>
-            <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
-              Deja de estudiar a ciegas. Descubre gratis en 90 segundos cuáles son las 3 áreas que de verdad necesitas mejorar para asegurar tu futuro con la PAA.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button className="text-lg px-8 py-6 shadow-lg transition-all hover:shadow-xl hover:scale-105" size="lg">
-                Empezar mi Diagnóstico GRATIS
-              </Button>
-              <Button variant="outline" className="group text-lg px-8 py-6">
-                Ver cómo funciona{" "}
-                <ExternalLink className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-};
 
 
 
@@ -54,10 +11,11 @@ export default function LandingPage() {
   return (
     <div>
       {/* Hero Section */}
-      <HeroSection />
+      <Hero12 />
 
       {/* Problem Section */}
-      <Feature43 
+      <div id="problem-section">
+        <Feature43 
         heading="Si te sientes así, estás en el lugar correcto"
         reasons={[
           {
@@ -77,6 +35,7 @@ export default function LandingPage() {
           }
         ]}
       />
+      </div>
 
       {/* Solution Section */}
       <SolutionSection />

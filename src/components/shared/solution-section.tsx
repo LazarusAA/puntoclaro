@@ -25,7 +25,7 @@ export const SolutionSection = () => {
   ];
 
   return (
-    <section className="w-full py-20 md:py-32 bg-muted/30">
+    <section className="w-full py-24 md:py-36 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
@@ -38,7 +38,7 @@ export const SolutionSection = () => {
             <Card key={index} className="relative border border-border/20 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-background/80 backdrop-blur-sm">
               <CardContent className="p-8 md:p-10">
                 <div className="flex flex-col items-center text-center space-y-6">
-                  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20">
+                  <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/0">
                     {step.icon}
                   </div>
                   <div className="space-y-4">
