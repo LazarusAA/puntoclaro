@@ -22,6 +22,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "~/components/ui/sheet";
+import { ScrollProgress } from "~/components/magicui/scroll-progress";
 
 interface MenuItem {
   title: string;
@@ -136,85 +137,88 @@ const Navbar1 = ({
   },
 }: Navbar1Props) => {
   return (
-    <section className="w-full py-4 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
-      <div className="container mx-auto px-4">
-        {/* Desktop Menu */}
-        <nav className="hidden justify-between lg:flex max-w-7xl mx-auto">
-          <div className="flex items-center gap-8">
-            {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-3">
-              <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
-              <span className="text-xl font-bold tracking-tight">
-                {logo.title}
-              </span>
-            </a>
-            <div className="flex items-center">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
-                </NavigationMenuList>
-              </NavigationMenu>
+    <>
+      <section className="w-full py-4 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+        <div className="container mx-auto px-4">
+          {/* Desktop Menu */}
+          <nav className="hidden justify-between items-center lg:flex max-w-7xl mx-auto">
+            <div className="flex items-center gap-8">
+              {/* Logo */}
+              <a href={logo.url} className="flex items-center gap-3">
+                <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
+                <span className="text-xl font-bold tracking-tight">
+                  {logo.title}
+                </span>
+              </a>
+              <div className="flex items-center">
+                <NavigationMenu>
+                  <NavigationMenuList>
+                    {menu.map((item) => renderMenuItem(item))}
+                  </NavigationMenuList>
+                </NavigationMenu>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Button asChild variant="outline" size="sm" className="font-medium">
+                <a href={auth.login.url}>{auth.login.title}</a>
+              </Button>
+              <Button asChild size="sm" className="font-medium">
+                <a href={auth.signup.url}>{auth.signup.title}</a>
+              </Button>
+            </div>
+          </nav>
+
+          {/* Mobile Menu */}
+          <div className="block lg:hidden">
+            <div className="flex items-center justify-between">
+              {/* Logo */}
+              <a href={logo.url} className="flex items-center gap-3">
+                <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
+                <span className="text-xl font-bold tracking-tight">
+                  {logo.title}
+                </span>
+              </a>
+              <Sheet>
+                <SheetTrigger asChild>
+                  <Button variant="outline" size="icon">
+                    <Menu className="size-4" />
+                  </Button>
+                </SheetTrigger>
+                <SheetContent className="overflow-y-auto">
+                  <SheetHeader>
+                    <SheetTitle>
+                      <a href={logo.url} className="flex items-center gap-3">
+                        <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
+                        <span className="text-lg font-bold">{logo.title}</span>
+                      </a>
+                    </SheetTitle>
+                  </SheetHeader>
+                  <div className="flex flex-col gap-6 p-4">
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="flex w-full flex-col gap-4"
+                    >
+                      {menu.map((item) => renderMobileMenuItem(item))}
+                    </Accordion>
+
+                    <div className="flex flex-col gap-3">
+                      <Button asChild variant="outline" className="font-medium">
+                        <a href={auth.login.url}>{auth.login.title}</a>
+                      </Button>
+                      <Button asChild className="font-medium">
+                        <a href={auth.signup.url}>{auth.signup.title}</a>
+                      </Button>
+                    </div>
+                  </div>
+                </SheetContent>
+              </Sheet>
             </div>
           </div>
-          <div className="flex gap-3">
-            <Button asChild variant="outline" size="sm" className="font-medium">
-              <a href={auth.login.url}>{auth.login.title}</a>
-            </Button>
-            <Button asChild size="sm" className="font-medium">
-              <a href={auth.signup.url}>{auth.signup.title}</a>
-            </Button>
-          </div>
-        </nav>
-
-        {/* Mobile Menu */}
-        <div className="block lg:hidden">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <a href={logo.url} className="flex items-center gap-3">
-              <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
-              <span className="text-xl font-bold tracking-tight">
-                {logo.title}
-              </span>
-            </a>
-            <Sheet>
-              <SheetTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <Menu className="size-4" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent className="overflow-y-auto">
-                <SheetHeader>
-                  <SheetTitle>
-                    <a href={logo.url} className="flex items-center gap-3">
-                      <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
-                      <span className="text-lg font-bold">{logo.title}</span>
-                    </a>
-                  </SheetTitle>
-                </SheetHeader>
-                <div className="flex flex-col gap-6 p-4">
-                  <Accordion
-                    type="single"
-                    collapsible
-                    className="flex w-full flex-col gap-4"
-                  >
-                    {menu.map((item) => renderMobileMenuItem(item))}
-                  </Accordion>
-
-                  <div className="flex flex-col gap-3">
-                    <Button asChild variant="outline" className="font-medium">
-                      <a href={auth.login.url}>{auth.login.title}</a>
-                    </Button>
-                    <Button asChild className="font-medium">
-                      <a href={auth.signup.url}>{auth.signup.title}</a>
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
         </div>
-      </div>
-    </section>
+      </section>
+      <ScrollProgress className="sticky top-[81px] z-40 h-px" />
+    </>
   );
 };
 

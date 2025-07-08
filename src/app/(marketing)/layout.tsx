@@ -1,5 +1,6 @@
 import { Navbar1 } from "~/components/layouts/main-nav";
 import { Footer7 } from "~/components/layouts/site-footer";
+import { ScrollProgress } from "~/components/magicui/scroll-progress";
 
 export default function MarketingLayout({
   children,
@@ -50,6 +51,7 @@ export default function MarketingLayout({
         }}
       />
       <main className="flex-1">{children}</main>
+      <ScrollProgress />
       <Footer7 
         logo={{
           url: "/",
