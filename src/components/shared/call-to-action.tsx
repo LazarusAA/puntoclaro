@@ -1,4 +1,5 @@
 import { Button } from "~/components/ui/button";
+import { AnimatedSection } from "./animated-section";
 
 interface Cta10Props {
   heading: string;
@@ -29,26 +30,31 @@ const Cta10 = ({
     <section className="w-full py-20 md:py-32">
       <div className="container mx-auto px-4">
         <div className="flex w-full flex-col gap-8 md:gap-12 lg:flex-row lg:items-center max-w-5xl mx-auto text-center lg:text-left">
-          <div className="flex-1">
-            <h3 className="mb-4 text-3xl font-bold md:mb-6 md:text-4xl lg:text-5xl lg:mb-8">
-              {heading}
-            </h3>
-            <p className="text-muted-foreground text-lg md:text-xl lg:text-2xl leading-relaxed">
-              {description}
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-start">
-            {buttons.secondary && (
-              <Button variant="outline" size="lg" asChild className="text-lg px-8 py-6">
-                <a href={buttons.secondary.url}>{buttons.secondary.text}</a>
-              </Button>
-            )}
-            {buttons.primary && (
-              <Button asChild variant="default" size="lg" className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
-                <a href={buttons.primary.url}>{buttons.primary.text}</a>
-              </Button>
-            )}
-          </div>
+          <AnimatedSection preset="slideInLeft" delay={0.2} className="flex-1">
+            <div>
+              <h3 className="mb-4 text-3xl font-bold md:mb-6 md:text-4xl lg:text-5xl lg:mb-8">
+                {heading}
+              </h3>
+              <p className="text-muted-foreground text-lg md:text-xl lg:text-2xl leading-relaxed">
+                {description}
+              </p>
+            </div>
+          </AnimatedSection>
+          
+          <AnimatedSection preset="slideInRight" delay={0.4} className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-start">
+            <div>
+              {buttons.secondary && (
+                <Button variant="outline" size="lg" asChild className="text-lg px-8 py-6">
+                  <a href={buttons.secondary.url}>{buttons.secondary.text}</a>
+                </Button>
+              )}
+              {buttons.primary && (
+                <Button asChild variant="default" size="lg" className="text-lg px-8 py-6 shadow-lg hover:shadow-xl transition-all hover:scale-105">
+                  <a href={buttons.primary.url}>{buttons.primary.text}</a>
+                </Button>
+              )}
+            </div>
+          </AnimatedSection>
         </div>
       </div>
     </section>
