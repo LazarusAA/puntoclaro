@@ -1,6 +1,6 @@
 'use client';
 
-import type { Transition } from 'motion/react';
+import type { Transition, Easing } from 'motion/react';
 import { isMobileDevice } from './device-utils';
 
 /**
@@ -103,7 +103,7 @@ export const formAnimations = {
 /**
  * Utility to disable hover animations on mobile devices
  */
-export const mobileOptimizedHover = <T extends Record<string, any>>(
+export const mobileOptimizedHover = <T extends Record<string, unknown>>(
   hoverProps: T
 ): Partial<T> => {
   return isMobileDevice() ? {} : hoverProps;
@@ -126,11 +126,10 @@ export const getLoadingSpinnerProps = () => ({
 
 /**
  * Creates a custom transition with mobile optimization
- * Note: ease parameter uses any type due to Framer Motion's complex easing type system
  */
 export const createOptimizedTransition = (
   baseDuration: number,
-  ease: any = EASING.smooth
+  ease: Easing | Easing[] = EASING.smooth
 ): Transition => {
   const duration = isMobileDevice() ? baseDuration * 0.8 : baseDuration;
   return { duration, ease };

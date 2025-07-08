@@ -3,6 +3,16 @@
  * Separated for better testability and caching
  */
 
+// Extend Navigator interface to include connection and deviceMemory properties
+interface NavigatorConnection {
+  effectiveType?: '4g' | '3g' | '2g' | 'slow-2g';
+}
+
+interface ExtendedNavigator extends Navigator {
+  connection?: NavigatorConnection;
+  deviceMemory?: number;
+}
+
 // Cache detection results to avoid repeated calculations
 let deviceCache: {
   isLowEnd?: boolean;
@@ -21,10 +31,11 @@ export const isLowEndDevice = (): boolean => {
   }
 
   try {
-    // Safe property access with fallbacks
-    const connection = (navigator as any).connection;
+    // Safe property access with proper typing
+    const extendedNavigator = navigator as ExtendedNavigator;
+    const connection = extendedNavigator.connection;
     const hardwareConcurrency = navigator.hardwareConcurrency ?? 4;
-    const deviceMemory = (navigator as any).deviceMemory ?? 4;
+    const deviceMemory = extendedNavigator.deviceMemory ?? 4;
     
     const isLowEnd = (
       // Low core count (likely low-end mobile)
@@ -32,7 +43,7 @@ export const isLowEndDevice = (): boolean => {
       // Low memory
       deviceMemory <= 2 ||
       // Slow connection (if supported)
-      (connection && ['slow-2g', '2g'].includes(connection.effectiveType)) ||
+      (connection && connection.effectiveType && ['slow-2g', '2g'].includes(connection.effectiveType)) ||
       // Legacy mobile patterns
       /Android\s*[4-5]\.|Windows\s*Phone/i.test(navigator.userAgent)
     );

@@ -2,6 +2,11 @@ import type { Variant, Transition, UseInViewOptions } from 'motion/react';
 import { isLowEndDevice, isMobileDevice, prefersReducedMotion } from './device-utils';
 
 /**
+ * Extended variant type that includes filter for blur effects
+ */
+type ExtendedVariant = Partial<Variant & { filter?: string }>;
+
+/**
  * Animation preset configuration interface
  */
 export interface AnimationPreset {
@@ -44,7 +49,7 @@ const EASING = {
  * Creates optimized variant with proper typing
  */
 const createVariant = (
-  baseVariant: Record<string, any>,
+  baseVariant: ExtendedVariant,
   includeFilter = false,
   willChange: string = WILL_CHANGE.transform
 ): Variant => ({
@@ -58,8 +63,8 @@ const createVariant = (
  * Factory function for creating animation presets with consistent structure
  */
 const createPreset = (
-  hiddenVariant: Record<string, any>,
-  visibleVariant: Record<string, any>,
+  hiddenVariant: ExtendedVariant,
+  visibleVariant: ExtendedVariant,
   transition: Transition = { duration: 0.5, ease: EASING.standard },
   viewOptions: UseInViewOptions = { margin: '0px 0px -100px 0px' },
   includeFilter = false
@@ -206,11 +211,14 @@ function optimizeVariantsForMobile(variants: AnimationPreset['variants']): Anima
   const optimized = { ...variants };
 
   // Remove blur filters on mobile for better performance
-  ['hidden', 'visible'].forEach(state => {
-    const variant = optimized[state as keyof typeof optimized];
+  (['hidden', 'visible'] as const).forEach(state => {
+    const variant = optimized[state];
     if (variant && typeof variant === 'object' && 'filter' in variant) {
-      const { filter, ...withoutFilter } = variant as any;
-      optimized[state as keyof typeof optimized] = withoutFilter;
+      // Create a new variant without the filter property
+      const variantWithoutFilter = Object.fromEntries(
+        Object.entries(variant).filter(([key]) => key !== 'filter')
+      ) as Variant;
+      optimized[state] = variantWithoutFilter;
     }
   });
 
