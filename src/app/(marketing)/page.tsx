@@ -8,7 +8,7 @@ import { Cta10 } from "~/components/shared/call-to-action";
 // Custom Hero Section based on Hero12
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-gradient-to-b from-background to-muted/20">
+    <section className="relative min-h-screen flex items-start justify-center overflow-hidden bg-gradient-to-b from-background to-muted/20 pt-20 md:pt-32">
       <div className="absolute inset-0 flex items-center justify-center opacity-40">
         <img
           alt="background"
@@ -17,20 +17,20 @@ const HeroSection = () => {
         />
       </div>
       <div className="relative z-10 w-full">
-        <div className="container mx-auto px-4 py-20">
+        <div className="container mx-auto px-4 py-8">
           <div className="mx-auto flex max-w-4xl flex-col items-center text-center">
-            <div className="rounded-xl bg-background/80 p-6 shadow-lg backdrop-blur-sm mb-8">
+            <div className="rounded-xl bg-background/80 p-2 shadow-lg backdrop-blur-sm mb-8">
               <img
-                src="https://deifkwefumgah.cloudfront.net/shadcnblocks/block/block-1.svg"
+                src="/logo.svg"
                 alt="PuntoClaro Logo"
-                className="h-16 w-16"
+                className="h-24 w-24 md:h-32 md:w-32 object-contain"
               />
             </div>
             <h1 className="mb-6 text-3xl font-bold tracking-tight text-pretty md:text-5xl lg:text-6xl">
               ¿La <span className="text-primary">jupa nublada</span> por el examen de admisión?
             </h1>
             <p className="mx-auto mb-8 max-w-2xl text-lg text-muted-foreground md:text-xl">
-              Deja de estudiar a ciegas. Descubre gratis en 90 segundos cuáles son las 3 áreas que de verdad necesitas mejorar para la PAA.
+              Deja de estudiar a ciegas. Descubre gratis en 90 segundos cuáles son las 3 áreas que de verdad necesitas mejorar para asegurar tu futuro con la PAA.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="text-lg px-8 py-6 shadow-lg transition-all hover:shadow-xl hover:scale-105" size="lg">
@@ -53,20 +53,20 @@ const SolutionSection = () => {
   const steps = [
     {
       number: "1",
-      title: "Responde 10 preguntas.",
+      title: "Responde 10 preguntas",
       description: "Nuestro 'Lightning Diagnostic' analiza tus respuestas para encontrar tu patrón de errores, no solo si la tuviste buena o mala.",
       icon: <Target className="size-8 text-primary" />
     },
     {
       number: "2", 
-      title: "Recibe tus 3 'Zonas Rojas'.",
+      title: "Recibe tus 3 Zonas Rojas",
       description: "Te mostramos las 3 áreas exactas donde cada minuto de estudio te dará el máximo resultado. Sin distracciones. Sin materia de relleno.",
       icon: <CheckCircle className="size-8 text-primary" />
     },
     {
       number: "3",
-      title: "Domina un tema, GRATIS.",
-      description: "Te damos una 'Micro-Dosis de Estudio' y un 'Machote' en PDF para que domines tu primera Zona Roja y veas lo fácil que puede ser.",
+      title: "Domina un tema, GRATIS",
+      description: "Te damos una Micro-Dosis de Estudio y un Machote en PDF para que domines tu primera Zona Roja y veas lo fácil que puede ser.",
       icon: <BookOpen className="size-8 text-primary" />
     }
   ];
@@ -76,13 +76,13 @@ const SolutionSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-            Te damos un plan de ataque en 3 simples pasos.
+            Te damos un plan de ataque en 3 simples pasos
           </h2>
         </div>
         
         <div className="grid gap-8 md:gap-12 sm:grid-cols-1 md:grid-cols-3 max-w-7xl mx-auto">
           {steps.map((step, index) => (
-            <Card key={index} className="relative border-2 hover:border-primary/40 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-background/80 backdrop-blur-sm">
+            <Card key={index} className="relative border border-border/20 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-background/80 backdrop-blur-sm">
               <CardContent className="p-8 md:p-10">
                 <div className="flex flex-col items-center text-center space-y-6">
                   <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 border-2 border-primary/20">
@@ -117,22 +117,22 @@ export default function LandingPage() {
 
       {/* Problem Section */}
       <Feature43 
-        heading="Si te sientes así, estás en el lugar correcto."
+        heading="Si te sientes así, estás en el lugar correcto"
         reasons={[
           {
             title: "Estudias sin Rumbo",
-            description: "Pasas horas repasando materia, pero no sabes si estás enfocándote en lo que realmente te dará más puntos en el examen.",
+            description: "Pasas horas repasando, pero no sabes si estás enfocándote en lo que realmente te dará más puntos en el examen.",
             icon: <Compass className="size-6" />
           },
           {
-            title: "La 'Lógica' te Abruma", 
+            title: "La Lógica te Abruma", 
             description: "Sientes que la 'lógica matemática' del TEC y la UCR es un juego de adivinanzas que el cole nunca te enseñó a jugar.",
-            icon: <Clock className="size-6" />
+            icon: <Brain className="size-6" />
           },
           {
             title: "Ansiedad por el Tiempo",
             description: "Te preocupa quedarte pegado en una pregunta y que el tiempo no te alcance para terminar la prueba con calma.",
-            icon: <Brain className="size-6" />
+            icon: <Clock className="size-6" />
           }
         ]}
       />
@@ -144,10 +144,10 @@ export default function LandingPage() {
       <Testimonial10 
         quote="Esos exámenes son más de aptitud que de conocimiento... la forma de prepararse es hacer mucha, pero mucha práctica, porque un componente grande es tu capacidad de manejar tu propio tiempo y tu estrés."
         author={{
-          name: "Un estudiante en r/Ticos",
-          role: "Futuro Cachimba",
+          name: "Alvaro Lazarus",
+          role: "Founder & CEO",
           avatar: {
-            src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/avatar-1.webp",
+            src: "/testimonial.svg",
             alt: "Estudiante"
           }
         }}
@@ -155,8 +155,8 @@ export default function LandingPage() {
 
       {/* Final CTA Section */}
       <Cta10 
-        heading="Tu futuro empieza hoy."
-        description="Deja la ansiedad. Toma el control. Descubre tus Zonas Rojas ahora."
+        heading="Tu futuro empieza hoy"
+        description="Deja la ansiedad. Toma el control. Descubre tus Zonas Rojas."
         buttons={{
           primary: {
             text: "Empezar mi Diagnóstico GRATIS",

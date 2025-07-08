@@ -92,7 +92,7 @@ const Footer7 = ({
                   src={logo.src}
                   alt={logo.alt}
                   title={logo.title}
-                  className="h-10 w-10"
+                  className="h-14 w-14 object-contain"
                 />
               </a>
               <h2 className="text-2xl font-bold">{logo.title}</h2>

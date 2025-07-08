@@ -28,7 +28,7 @@ const Cta10 = ({
   return (
     <section className="w-full py-20 md:py-32">
       <div className="container mx-auto px-4">
-        <div className="bg-gradient-to-r from-accent to-accent/80 flex w-full flex-col gap-8 overflow-hidden rounded-2xl p-8 md:gap-12 md:p-12 lg:flex-row lg:items-center lg:p-16 max-w-7xl mx-auto shadow-lg">
+        <div className="flex w-full flex-col gap-8 md:gap-12 lg:flex-row lg:items-center max-w-5xl mx-auto text-center lg:text-left">
           <div className="flex-1">
             <h3 className="mb-4 text-3xl font-bold md:mb-6 md:text-4xl lg:text-5xl lg:mb-8">
               {heading}
@@ -37,7 +37,7 @@ const Cta10 = ({
               {description}
             </p>
           </div>
-          <div className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row">
+          <div className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-start">
             {buttons.secondary && (
               <Button variant="outline" size="lg" asChild className="text-lg px-8 py-6">
                 <a href={buttons.secondary.url}>{buttons.secondary.text}</a>

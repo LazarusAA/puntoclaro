@@ -143,7 +143,7 @@ const Navbar1 = ({
           <div className="flex items-center gap-8">
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-3">
-              <img src={logo.src} className="h-8 w-8" alt={logo.alt} />
+              <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
               <span className="text-xl font-bold tracking-tight">
                 {logo.title}
               </span>
@@ -171,7 +171,7 @@ const Navbar1 = ({
           <div className="flex items-center justify-between">
             {/* Logo */}
             <a href={logo.url} className="flex items-center gap-3">
-              <img src={logo.src} className="h-8 w-8" alt={logo.alt} />
+              <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
               <span className="text-xl font-bold tracking-tight">
                 {logo.title}
               </span>
@@ -186,7 +186,7 @@ const Navbar1 = ({
                 <SheetHeader>
                   <SheetTitle>
                     <a href={logo.url} className="flex items-center gap-3">
-                      <img src={logo.src} className="h-8 w-8" alt={logo.alt} />
+                      <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
                       <span className="text-lg font-bold">{logo.title}</span>
                     </a>
                   </SheetTitle>
