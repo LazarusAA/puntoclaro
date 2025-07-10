@@ -18,8 +18,10 @@ export default function DiagnosticPage() {
           signup: { title: "Registrarse", url: "/signup" }
         }}
       />
-      <main className="flex-grow flex items-center justify-center p-4 py-20 sm:py-50">
-        <DiagnosticQuiz />
+      <main className="flex-grow flex items-center justify-center p-4">
+        <div className="w-full max-w-2xl h-[750px] flex items-center justify-center">
+          <DiagnosticQuiz />
+        </div>
       </main>
 
       <Footer7 />
