@@ -11,11 +11,7 @@ const prefersReducedMotion = () => {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 };
 
-// Basic mobile detection
-const isMobile = () => {
-  if (typeof window === 'undefined') return false;
-  return window.innerWidth < 768;
-};
+
 
 export interface AnimationPreset {
   variants: {
@@ -47,14 +43,14 @@ const createPreset = (
 // Animation presets used on landing page
 export const animations = {
   fadeInUp: createPreset(
-    { opacity: 0, y: 60, filter: 'blur(4px)' },
-    { opacity: 1, y: 0, filter: 'blur(0px)' },
+    { opacity: 0, y: 60 },
+    { opacity: 1, y: 0 },
     { duration: 0.6, ease: EASING.standard }
   ),
 
   hero: createPreset(
-    { opacity: 0, y: 30, filter: 'blur(6px)' },
-    { opacity: 1, y: 0, filter: 'blur(0px)' },
+    { opacity: 0, y: 30 },
+    { opacity: 1, y: 0 },
     { duration: 0.8, ease: EASING.standard },
     { margin: '0px 0px -50px 0px' }
   ),
@@ -78,8 +74,8 @@ export const animations = {
   ),
 
   staggerItem: createPreset(
-    { opacity: 0, y: 40, filter: 'blur(4px)' },
-    { opacity: 1, y: 0, filter: 'blur(0px)' },
+    { opacity: 0, y: 40 },
+    { opacity: 1, y: 0 },
     { duration: 0.5, ease: EASING.standard }
   ),
 } as const;
@@ -103,26 +99,7 @@ export const getOptimizedAnimation = (name: AnimationName): AnimationPreset => {
     };
   }
   
-  // Remove blur on mobile for better performance
-  if (isMobile()) {
-    const mobileVariants = {
-      hidden: { ...preset.variants.hidden },
-      visible: { ...preset.variants.visible },
-    };
-    
-    // Remove filter property if it exists
-    if ('filter' in mobileVariants.hidden) {
-      delete mobileVariants.hidden.filter;
-    }
-    if ('filter' in mobileVariants.visible) {
-      delete mobileVariants.visible.filter;
-    }
-    
-    return {
-      ...preset,
-      variants: mobileVariants,
-    };
-  }
+  // No additional mobile optimizations needed
   
   return preset;
 };
