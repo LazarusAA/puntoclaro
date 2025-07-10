@@ -19,17 +19,17 @@ export default function LandingPage() {
         heading="Si te sientes así, estás en el lugar correcto"
         reasons={[
           {
-            title: "Estudias sin Rumbo",
+            title: "Estudias sin rumbo",
             description: "Pasas horas repasando, pero no sabes si estás enfocándote en lo que realmente te dará más puntos en el examen.",
             icon: <Compass className="size-6" />
           },
           {
-            title: "La Lógica te Abruma", 
-            description: "Sientes que la 'lógica matemática' del TEC y la UCR es un juego de adivinanzas que el cole nunca te enseñó a jugar.",
+            title: "La lógica te abruma", 
+            description: "Sientes que la lógica matemática del TEC y la UCR es un juego de adivinanzas que el cole nunca te enseñó a jugar.",
             icon: <Brain className="size-6" />
           },
           {
-            title: "Ansiedad por el Tiempo",
+            title: "Ansiedad por el tiempo",
             description: "Te preocupa quedarte pegado en una pregunta y que el tiempo no te alcance para terminar la prueba con calma.",
             icon: <Clock className="size-6" />
           }
@@ -42,7 +42,7 @@ export default function LandingPage() {
 
       {/* Testimonial Section */}
       <Testimonial10 
-        quote="Esos exámenes son más de aptitud que de conocimiento... la forma de prepararse es hacer mucha, pero mucha práctica, porque un componente grande es tu capacidad de manejar tu propio tiempo y tu estrés."
+        quote="Esos exámenes son más de aptitud que de conocimiento... la mejor forma de prepararse es hacer mucha, pero mucha práctica, porque un gran componente es tu capacidad de manejar tu propio tiempo y estrés."
         author={{
           name: "Alvaro Lazarus",
           role: "Founder & CEO",

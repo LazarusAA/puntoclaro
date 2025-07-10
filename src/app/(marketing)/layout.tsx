@@ -12,8 +12,8 @@ export default function MarketingLayout({
         logo={{
           url: "/",
           src: "/logo.svg",
-          alt: "PuntoClaro Logo",
-          title: "PuntoClaro",
+          alt: "Umbral Logo",
+          title: "Umbral",
         }}
         menu={[]}
         // Uncomment below for simple navigation when needed:
@@ -54,8 +54,8 @@ export default function MarketingLayout({
         logo={{
           url: "/",
           src: "/logo.svg",
-          alt: "PuntoClaro Logo",
-          title: "PuntoClaro",
+          alt: "Umbral Logo",
+          title: "Umbral",
         }}
         description="La plataforma más efectiva para prepararte para la PAA y entrar a la universidad de tus sueños."
         sections={[
@@ -84,7 +84,7 @@ export default function MarketingLayout({
             ],
           },
         ]}
-        copyright="© 2025 PuntoClaro. Todos los derechos reservados."
+        copyright="© 2025 Umbral. Todos los derechos reservados."
       />
     </div>
   );

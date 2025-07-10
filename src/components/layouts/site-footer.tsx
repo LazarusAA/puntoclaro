@@ -72,12 +72,12 @@ const Footer7 = ({
     url: "https://www.shadcnblocks.com",
     src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
     alt: "logo",
-    title: "Shadcnblocks.com",
+    title: "Umbral",
   },
   sections = defaultSections,
-  description = "A collection of components for your startup business or side project.",
+  description = "Tu futuro empieza hoy",
   socialLinks = defaultSocialLinks,
-  copyright = "© 2024 Shadcnblocks.com. All rights reserved.",
+  copyright = "© 2025 Umbral. Todos los derechos reservados.",
   legalLinks = defaultLegalLinks,
 }: Footer7Props) => {
   return (

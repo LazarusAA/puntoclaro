@@ -13,6 +13,10 @@ const Hero12 = () => {
           className="[mask-image:radial-gradient(75%_75%_at_center,white,transparent)] opacity-90"
         />
       </div>
+      {/* Background mask behind logo to make it more prominent */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none" style={{ marginTop: '-22rem' }}>
+        <div className="w-40 h-20 md:w-80 md:h-28 lg:w-96 lg:h-32 bg-background rounded-full blur-lg opacity-90"></div>
+      </div>
       <div className="relative z-10 w-full py-12 md:py-16">
         <div className="container mx-auto px-4 lg:px-8 flex max-w-5xl flex-col items-center">
           <div className="flex flex-col items-center gap-6 text-center">
