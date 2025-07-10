@@ -43,14 +43,14 @@ const createPreset = (
 // Animation presets used on landing page
 export const animations = {
   fadeInUp: createPreset(
-    { opacity: 0, y: 60 },
-    { opacity: 1, y: 0 },
+    { opacity: 0, scale: 0.95 },
+    { opacity: 1, scale: 1 },
     { duration: 0.6, ease: EASING.standard }
   ),
 
   hero: createPreset(
-    { opacity: 0, y: 30 },
-    { opacity: 1, y: 0 },
+    { opacity: 0, scale: 0.98 },
+    { opacity: 1, scale: 1 },
     { duration: 0.8, ease: EASING.standard },
     { margin: '0px 0px -50px 0px' }
   ),
@@ -74,8 +74,8 @@ export const animations = {
   ),
 
   staggerItem: createPreset(
-    { opacity: 0, y: 40 },
-    { opacity: 1, y: 0 },
+    { opacity: 0, scale: 0.96 },
+    { opacity: 1, scale: 1 },
     { duration: 0.5, ease: EASING.standard }
   ),
 } as const;
