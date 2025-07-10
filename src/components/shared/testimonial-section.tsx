@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from "~/components/ui/avatar";
-import { AnimatedSection } from "./animated-section";
+import { AnimateOnScroll } from "~/components/ui/animate-on-scroll";
 
 interface Testimonial10Props {
   quote?: string;
@@ -28,13 +28,13 @@ const Testimonial10 = ({
     <section className="w-full py-24 md:py-36 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="flex flex-col items-center text-center max-w-5xl mx-auto">
-          <AnimatedSection preset="fadeInUp" delay={0.2}>
+          <AnimateOnScroll animation="fadeInUp" delay={0.2}>
             <p className="mb-16 md:mb-20 font-medium text-lg md:text-2xl lg:text-3xl leading-relaxed">
               &ldquo;{quote}&rdquo;
             </p>
-          </AnimatedSection>
+          </AnimateOnScroll>
           
-          <AnimatedSection preset="scaleUp" delay={0.4}>
+          <AnimateOnScroll animation="scaleUp" delay={0.4}>
             <div className="flex items-center gap-4 md:gap-6">
               <Avatar className="size-16 md:size-20 border-2 border-primary/20">
                 <AvatarImage src={author.avatar.src} alt={author.avatar.alt} />
@@ -47,7 +47,7 @@ const Testimonial10 = ({
                 </p>
               </div>
             </div>
-          </AnimatedSection>
+          </AnimateOnScroll>
         </div>
       </div>
     </section>

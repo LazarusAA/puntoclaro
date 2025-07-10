@@ -6,7 +6,8 @@ import {
   SquareKanban,
   WandSparkles,
 } from "lucide-react";
-import { AnimatedSection, AnimatedGrid, AnimatedGridItem } from "./animated-section";
+import { AnimateOnScroll } from "~/components/ui/animate-on-scroll";
+import { StaggerGrid, StaggerItem } from "~/components/ui/stagger-grid";
 
 interface Reason {
   title: string;
@@ -63,20 +64,20 @@ const Feature43 = ({
   return (
     <section className="w-full py-32 md:py-48">
       <div className="container mx-auto px-4">
-        <AnimatedSection preset="fadeInUp" delay={0.2}>
+        <AnimateOnScroll animation="fadeInUp" delay={0.2}>
           <div className="mb-16 md:mb-20">
             <h2 className="mb-6 text-center text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
               {heading}
             </h2>
           </div>
-        </AnimatedSection>
+        </AnimateOnScroll>
         
-        <AnimatedGrid 
+        <StaggerGrid 
           className="grid gap-12 md:gap-16 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto"
           staggerDelay={0.15}
         >
           {reasons.map((reason, i) => (
-            <AnimatedGridItem key={i}>
+            <StaggerItem key={i}>
               <div className="flex flex-col items-center text-center">
                 <div className="mb-6 flex size-20 items-center justify-center rounded-full bg-primary/10 border-2 border-primary/0 text-primary">
                   {reason.icon}
@@ -84,9 +85,9 @@ const Feature43 = ({
                 <h3 className="mb-4 text-xl md:text-2xl font-bold">{reason.title}</h3>
                 <p className="text-muted-foreground leading-relaxed text-base md:text-lg">{reason.description}</p>
               </div>
-            </AnimatedGridItem>
+            </StaggerItem>
           ))}
-        </AnimatedGrid>
+        </StaggerGrid>
       </div>
     </section>
   );

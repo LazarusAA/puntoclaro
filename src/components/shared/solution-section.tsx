@@ -1,6 +1,7 @@
 import { Target, CheckCircle, BookOpen } from "lucide-react";
 import { Card, CardContent } from "~/components/ui/card";
-import { AnimatedSection, AnimatedGrid, AnimatedGridItem } from "./animated-section";
+import { AnimateOnScroll } from "~/components/ui/animate-on-scroll";
+import { StaggerGrid, StaggerItem } from "~/components/ui/stagger-grid";
 
 // Custom Solution Section
 export const SolutionSection = () => {
@@ -28,20 +29,20 @@ export const SolutionSection = () => {
   return (
     <section className="w-full py-24 md:py-36 bg-muted/30">
       <div className="container mx-auto px-4">
-        <AnimatedSection preset="fadeInUp" delay={0.2}>
+        <AnimateOnScroll animation="fadeInUp" delay={0.2}>
           <div className="text-center mb-16">
             <h2 className="mb-6 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
               Te damos un plan de ataque en 3 simples pasos
             </h2>
           </div>
-        </AnimatedSection>
+        </AnimateOnScroll>
         
-        <AnimatedGrid 
+        <StaggerGrid 
           className="grid gap-8 md:gap-12 sm:grid-cols-1 md:grid-cols-3 max-w-7xl mx-auto"
           staggerDelay={0.15}
         >
           {steps.map((step, index) => (
-            <AnimatedGridItem key={index}>
+            <StaggerItem key={index}>
               <Card className="relative border border-border/20 hover:border-primary/30 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-background/80 backdrop-blur-sm">
                 <CardContent className="p-8 md:p-10">
                   <div className="flex flex-col items-center text-center space-y-6">
@@ -62,9 +63,9 @@ export const SolutionSection = () => {
                   </div>
                 </CardContent>
               </Card>
-            </AnimatedGridItem>
+            </StaggerItem>
           ))}
-        </AnimatedGrid>
+        </StaggerGrid>
       </div>
     </section>
   );

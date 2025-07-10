@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter } from "react-icons/fa";
 
 interface Footer7Props {
@@ -69,8 +70,8 @@ const defaultLegalLinks = [
 
 const Footer7 = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
+    url: "https://umbral.cr",
+    src: "/logo.svg",
     alt: "logo",
     title: "Umbral",
   },
@@ -88,10 +89,12 @@ const Footer7 = ({
             {/* Logo */}
             <div className="flex items-center gap-3 lg:justify-start">
               <a href={logo.url}>
-                <img
+                <Image
                   src={logo.src}
                   alt={logo.alt}
                   title={logo.title}
+                  width={56}
+                  height={56}
                   className="h-14 w-14 object-contain"
                 />
               </a>

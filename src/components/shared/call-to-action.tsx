@@ -1,5 +1,5 @@
 import { Button } from "~/components/ui/button";
-import { AnimatedSection } from "./animated-section";
+import { AnimateOnScroll } from "~/components/ui/animate-on-scroll";
 
 interface Cta10Props {
   heading: string;
@@ -30,7 +30,7 @@ const Cta10 = ({
     <section className="w-full py-20 md:py-32">
       <div className="container mx-auto px-4">
         <div className="flex w-full flex-col gap-8 md:gap-12 lg:flex-row lg:items-center max-w-5xl mx-auto text-center lg:text-left">
-          <AnimatedSection preset="slideInLeft" delay={0.2} className="flex-1">
+          <AnimateOnScroll animation="slideInLeft" delay={0.2} className="flex-1">
             <div>
               <h3 className="mb-4 text-3xl font-bold md:mb-6 md:text-4xl lg:text-5xl lg:mb-8">
                 {heading}
@@ -39,9 +39,9 @@ const Cta10 = ({
                 {description}
               </p>
             </div>
-          </AnimatedSection>
+          </AnimateOnScroll>
           
-          <AnimatedSection preset="slideInRight" delay={0.4} className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-start">
+          <AnimateOnScroll animation="slideInRight" delay={0.4} className="flex shrink-0 flex-col gap-4 sm:flex-row lg:flex-col xl:flex-row justify-center lg:justify-start">
             <div>
               {buttons.secondary && (
                 <Button variant="outline" size="lg" asChild className="text-lg px-8 py-6">
@@ -54,7 +54,7 @@ const Cta10 = ({
                 </Button>
               )}
             </div>
-          </AnimatedSection>
+          </AnimateOnScroll>
         </div>
       </div>
     </section>

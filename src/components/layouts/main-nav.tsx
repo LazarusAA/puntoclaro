@@ -1,4 +1,5 @@
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
+import Image from "next/image";
 
 import {
   Accordion,
@@ -54,10 +55,10 @@ interface Navbar1Props {
 
 const Navbar1 = ({
   logo = {
-    url: "https://www.shadcnblocks.com",
-    src: "https://deifkwefumgah.cloudfront.net/shadcnblocks/block/logos/shadcnblockscom-icon.svg",
+    url: "https://umbral.cr",
+    src: "/logo.svg",
     alt: "logo",
-    title: "Shadcnblocks.com",
+    title: "Umbral",
   },
   menu = [
     { title: "Home", url: "#" },
@@ -145,7 +146,7 @@ const Navbar1 = ({
             <div className="flex items-center gap-8">
               {/* Logo */}
               <a href={logo.url} className="flex items-center gap-3">
-                <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
+                <Image src={logo.src} width={48} height={48} className="h-12 w-12 object-contain" alt={logo.alt} />
                 <span className="text-xl font-bold tracking-tight">
                   {logo.title}
                 </span>
@@ -173,7 +174,7 @@ const Navbar1 = ({
             <div className="flex items-center justify-between">
               {/* Logo */}
               <a href={logo.url} className="flex items-center gap-3">
-                <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
+                <Image src={logo.src} width={48} height={48} className="h-12 w-12 object-contain" alt={logo.alt} />
                 <span className="text-xl font-bold tracking-tight">
                   {logo.title}
                 </span>
@@ -188,7 +189,7 @@ const Navbar1 = ({
                   <SheetHeader>
                     <SheetTitle>
                       <a href={logo.url} className="flex items-center gap-3">
-                        <img src={logo.src} className="h-12 w-12 object-contain" alt={logo.alt} />
+                        <Image src={logo.src} width={48} height={48} className="h-12 w-12 object-contain" alt={logo.alt} />
                         <span className="text-lg font-bold">{logo.title}</span>
                       </a>
                     </SheetTitle>
