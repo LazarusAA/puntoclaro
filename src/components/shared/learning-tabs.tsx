@@ -6,6 +6,7 @@ import { AnimatedBackground } from '~/components/ui/animated-background'
 import { Download } from 'lucide-react'
 import { useState } from 'react'
 import type { LearningModule } from '~/types/learning'
+import { PracticeQuiz } from './practice-quiz'
 
 interface LearningTabsProps {
   learningData: LearningModule;
@@ -90,12 +91,10 @@ export function LearningTabs({ learningData }: LearningTabsProps) {
         <Card>
           <CardHeader>
             <CardTitle>¡A Practicar!</CardTitle>
-            <CardDescription>Es hora de poner a prueba lo que aprendiste con 5 preguntas.</CardDescription>
+            <CardDescription>Es hora de poner a prueba lo que aprendiste con 5 preguntas sobre {title}.</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-center p-8 bg-slate-50 rounded-md">
-              <p>El componente de práctica para &ldquo;{title}&rdquo; iría aquí.</p>
-            </div>
+            <PracticeQuiz />
           </CardContent>
         </Card>
       )}
