@@ -1,9 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { Button } from '~/components/ui/button'
 import { Input } from '~/components/ui/input'
 import { Label } from '~/components/ui/label'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { AnimatedBackground } from '~/components/ui/animated-background'
 import {
   Dialog,
   DialogContent,
@@ -135,6 +136,8 @@ export function AuthModal({
   trigger,
   children 
 }: AuthModalProps) {
+  const [activeTab, setActiveTab] = useState<'login' | 'signup'>(defaultTab)
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -150,18 +153,41 @@ export function AuthModal({
           </DialogDescription>
         </DialogHeader>
         
-        <Tabs defaultValue={defaultTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="login">Iniciar Sesión</TabsTrigger>
-            <TabsTrigger value="signup">Registrarse</TabsTrigger>
-          </TabsList>
-          <TabsContent value="login" className="pt-4">
-            <LoginForm />
-          </TabsContent>
-          <TabsContent value="signup" className="pt-4">
-            <SignupForm />
-          </TabsContent>
-        </Tabs>
+        <div className="w-full">
+          <div className="rounded-lg bg-gray-200 p-1 mb-6 dark:bg-zinc-800 flex">
+            <AnimatedBackground
+              defaultValue={defaultTab}
+              className="rounded-md bg-white shadow-sm dark:bg-zinc-700"
+              transition={{
+                ease: 'easeInOut',
+                duration: 0.2,
+              }}
+              onValueChange={(value) => {
+                const validTab = value === 'login' || value === 'signup' ? value : 'login'
+                setActiveTab(validTab)
+              }}
+            >
+              {[
+                { id: 'login', label: 'Iniciar Sesión' },
+                { id: 'signup', label: 'Registrarse' }
+              ].map((tab) => (
+                <button
+                  key={tab.id}
+                  data-id={tab.id}
+                  type="button"
+                  className="flex-1 flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 transition-transform active:scale-[0.98] dark:text-gray-200 min-w-0"
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </AnimatedBackground>
+          </div>
+
+          <div className="pt-2">
+            {activeTab === 'login' && <LoginForm />}
+            {activeTab === 'signup' && <SignupForm />}
+          </div>
+        </div>
         
       </DialogContent>
     </Dialog>
