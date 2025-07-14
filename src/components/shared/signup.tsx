@@ -4,7 +4,7 @@ import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Label } from "~/components/ui/label";
 
-interface Signup2Props {
+interface SignupProps {
   heading?: string;
   subheading?: string;
   logo: {
@@ -19,7 +19,7 @@ interface Signup2Props {
   loginUrl?: string;
 }
 
-const Signup2 = ({
+const Signup = ({
   heading = "Signup",
   subheading = "Create a new account",
   logo = {
@@ -32,7 +32,7 @@ const Signup2 = ({
   signupText = "Create an account",
   loginText = "Already have an account?",
   loginUrl = "#",
-}: Signup2Props) => {
+}: SignupProps) => {
   return (
     <section className="bg-muted h-screen">
       <div className="flex h-full items-center justify-center">
@@ -98,4 +98,4 @@ const Signup2 = ({
   );
 };
 
-export { Signup2 };
+export { Signup };

@@ -1,5 +1,8 @@
+'use client'
+
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 import {
   Accordion,
@@ -24,6 +27,7 @@ import {
   SheetTrigger,
 } from "~/components/ui/sheet";
 import { ScrollProgress } from "~/components/magicui/scroll-progress";
+import { LoginButton, SignupButton } from "~/components/shared/auth-modal";
 
 interface MenuItem {
   title: string;
@@ -137,6 +141,10 @@ const Navbar1 = ({
     signup: { title: "Sign up", url: "#" },
   },
 }: Navbar1Props) => {
+  // TODO: Replace with actual authentication state from Supabase
+  // Example: const { data: { user } } = await supabase.auth.getUser()
+  const user = null;
+
   return (
     <>
       <section className="w-full py-4 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -160,12 +168,24 @@ const Navbar1 = ({
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button asChild variant="outline" size="sm" className="font-medium">
-                <a href={auth.login.url}>{auth.login.title}</a>
-              </Button>
-              <Button asChild size="sm" className="font-medium">
-                <a href={auth.signup.url}>{auth.signup.title}</a>
-              </Button>
+              {user ? (
+                // If the user is logged in, show a "Go to Dashboard" button
+                <Link href="/dashboard">
+                  <Button size="sm" className="font-medium">
+                    Ir al Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                // If the user is logged out, show login and signup buttons
+                <>
+                  <LoginButton variant="outline" size="sm">
+                    {auth.login.title}
+                  </LoginButton>
+                  <SignupButton size="sm">
+                    {auth.signup.title}
+                  </SignupButton>
+                </>
+              )}
             </div>
           </nav>
 
@@ -204,12 +224,24 @@ const Navbar1 = ({
                     </Accordion>
 
                     <div className="flex flex-col gap-3">
-                      <Button asChild variant="outline" className="font-medium">
-                        <a href={auth.login.url}>{auth.login.title}</a>
-                      </Button>
-                      <Button asChild className="font-medium">
-                        <a href={auth.signup.url}>{auth.signup.title}</a>
-                      </Button>
+                      {user ? (
+                        // If the user is logged in, show a "Go to Dashboard" button
+                        <Link href="/dashboard">
+                          <Button className="font-medium w-full">
+                            Ir al Dashboard
+                          </Button>
+                        </Link>
+                      ) : (
+                        // If the user is logged out, show login and signup buttons
+                        <>
+                          <LoginButton variant="outline" className="w-full">
+                            {auth.login.title}
+                          </LoginButton>
+                          <SignupButton className="w-full">
+                            {auth.signup.title}
+                          </SignupButton>
+                        </>
+                      )}
                     </div>
                   </div>
                 </SheetContent>
@@ -293,4 +325,8 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
   );
 };
 
+// Export the enhanced navbar component as MainNav for the new integration
+export { Navbar1 as MainNav };
+
+// Also export the original name for backward compatibility
 export { Navbar1 };
