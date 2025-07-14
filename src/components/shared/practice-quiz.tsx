@@ -82,6 +82,7 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
   const [score, setScore] = useState(0)
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
+  const [showScorePulse, setShowScorePulse] = useState(false)
 
   const currentQuestion = questions[currentQuestionIndex]
 
@@ -90,6 +91,8 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
     setSelectedOption(optionId)
     if (optionId === currentQuestion.correctOptionId) {
       setScore(score + 1)
+      setShowScorePulse(true)
+      setTimeout(() => setShowScorePulse(false), 600)
     }
   }
   
@@ -106,6 +109,7 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
     setCurrentQuestionIndex(0)
     setScore(0)
     setSelectedOption(null)
+    setShowScorePulse(false)
     setIsCompleted(false)
   }
 
@@ -131,29 +135,29 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
     )
   }
 
-  const getButtonVariant = (optionId: string) => {
-    if (!selectedOption) return 'outline'
-    if (optionId === currentQuestion.correctOptionId) return 'default' // Green for correct
-    if (optionId === selectedOption) return 'destructive' // Red for incorrect
+  const getButtonVariant = (optionId: string): "outline" => {
+    // Use outline variant consistently for all states to maintain border structure
     return 'outline'
   }
 
   const getButtonClassName = (optionId: string) => {
-    if (!selectedOption) return ''
+    if (!selectedOption) return 'hover:shadow-md hover:scale-[1.01] active:scale-[0.98]'
     if (optionId === currentQuestion.correctOptionId) {
-      return 'bg-green-500 hover:bg-green-500 border-green-500 text-gray-900'
+      return 'bg-green-500 hover:bg-green-500 border-green-500 text-gray-900 shadow-md shadow-green-200 transform scale-[1.02]'
     }
     if (optionId === selectedOption && optionId !== currentQuestion.correctOptionId) {
-      return 'bg-red-500 hover:bg-red-500 border-red-500 text-gray-900'
+      return 'bg-red-500 hover:bg-red-500 border-red-500 text-gray-900 shadow-md shadow-red-200'
     }
-    return 'opacity-40 bg-gray-100'
+    return 'opacity-40 bg-gray-100 border-gray-200'
   }
 
   return (
     <div>
       <div className="mb-4 flex justify-between items-center">
         <h3 className="text-lg font-semibold">Pregunta {currentQuestionIndex + 1} de {questions.length}</h3>
-        <div className="text-sm text-slate-600">Puntuación: {score}/{questions.length}</div>
+        <div className={`text-sm text-slate-600 transition-all duration-300 ${showScorePulse ? 'animate-pulse text-green-600 font-bold scale-110' : ''}`}>
+          Puntuación: {score}/{questions.length}
+        </div>
       </div>
       
       <h4 className="text-base mb-4 leading-relaxed">{currentQuestion.text}</h4>
@@ -163,12 +167,12 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
                      <Button
              key={option.id}
              variant={getButtonVariant(option.id)}
-             className={`w-full justify-start h-auto py-3 text-left transition-colors duration-300 ${getButtonClassName(option.id)}`}
+             className={`w-full justify-start h-auto py-3 text-left transition-all duration-500 ease-out ${getButtonClassName(option.id)}`}
              onClick={() => handleOptionSelect(option.id)}
              disabled={!!selectedOption}
            >
              {selectedOption && option.id === currentQuestion.correctOptionId && (
-               <CheckCircle2 className="mr-3 h-6 w-6 text-gray-900 animate-pulse" />
+               <CheckCircle2 className="mr-3 h-6 w-6 text-gray-900 animate-bounce" />
              )}
              {selectedOption === option.id && option.id !== currentQuestion.correctOptionId && (
                <XCircle className="mr-3 h-6 w-6 text-gray-900 animate-pulse" />
