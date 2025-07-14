@@ -29,9 +29,9 @@ export function LearningTabs({ learningData }: LearningTabsProps) {
           onValueChange={(value) => setActiveTab(value || 'explicacion')}
         >
           {[
-            { id: 'explicacion', label: '1. La Explicación' },
-            { id: 'machote', label: '2. El Machote' },
-            { id: 'practica', label: '3. La Práctica' }
+            { id: 'explicacion', label: '1. Explicación' },
+            { id: 'machote', label: '2. Machote' },
+            { id: 'practica', label: '3. Práctica' }
           ].map((tab) => (
             <button
               key={tab.id}

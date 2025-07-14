@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { LearningTabs } from '~/components/shared/learning-tabs'
 import type { LearningModule } from '~/types/learning'
 
@@ -33,9 +35,17 @@ export default async function LearningPage({ params }: { params: Promise<{ topic
     return (
     <div className="bg-slate-50/50">
       <div className="container mx-auto max-w-5xl px-4 py-12 sm:py-16 lg:px-8">
+        {/* Navigation back to dashboard */}
+        <div className="mb-8">
+          <Link href="/dashboard" className="flex items-center text-sm text-slate-600 hover:text-slate-900 transition-colors">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a mi plan de ataque
+          </Link>
+        </div>
+
         <header className="mb-8">
           <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{learningModuleData.title}</h1>
-          <p className="text-lg text-slate-600 mt-2">Tu &ldquo;Micro-Dosis&rdquo; de estudio está lista. Concéntrate en una sección a la vez.</p>
+          <p className="text-lg text-slate-600 mt-2">Tu micro-dosis de estudio está lista. Concéntrate en una sección a la vez.</p>
         </header>
 
         <LearningTabs learningData={learningModuleData} />
