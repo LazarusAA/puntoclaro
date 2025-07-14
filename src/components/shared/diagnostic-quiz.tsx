@@ -15,6 +15,14 @@ type Question = {
   }[]
 }
 
+// Define the exam type
+type ExamType = 'ucr' | 'tec';
+
+// Component props interface
+interface DiagnosticQuizProps {
+  examType: ExamType;
+}
+
 // Placeholder questions for building the UI.
 const placeholderQuestions: Question[] = [
   {
@@ -50,10 +58,13 @@ const placeholderQuestions: Question[] = [
   },
 ]
 
-export function DiagnosticQuiz() {
+export function DiagnosticQuiz({ examType }: DiagnosticQuizProps) {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
   const [completedQuestions, setCompletedQuestions] = useState(0)
   const [isCompleted, setIsCompleted] = useState(false)
+
+  // TODO: Use examType to fetch exam-specific questions from the database
+  console.log('Quiz initialized for exam type:', examType)
 
   const handleAnswerClick = (optionId: string) => {
     // In the real app, we would send the answer to our backend here.
