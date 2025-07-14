@@ -8,7 +8,19 @@ interface AppLayoutProps {
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <Navbar1 />
+      <Navbar1 
+        menu={[]} 
+        logo={{
+          url: "/",
+          src: "/logo.svg",
+          alt: "Umbral Logo",
+          title: "Umbral"
+        }}
+        auth={{
+          login: { title: "Iniciar sesión", url: "/login" },
+          signup: { title: "Registrarse", url: "/signup" }
+        }}      
+      />
       <main className="flex-1">
         {children}
       </main>

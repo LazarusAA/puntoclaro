@@ -10,8 +10,8 @@ export default function DiagnosticPage() {
         logo={{
           url: "/",
           src: "/logo.svg",
-          alt: "Punto Claro Logo",
-          title: "Punto Claro"
+          alt: "Umbral Logo",
+          title: "Umbral"
         }}
         auth={{
           login: { title: "Iniciar sesión", url: "/login" },
