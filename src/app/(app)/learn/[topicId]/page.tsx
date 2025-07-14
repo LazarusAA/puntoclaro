@@ -32,6 +32,10 @@ export default async function LearningPage({ params }: { params: Promise<{ topic
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { topicId } = await params
 
+  // Share configuration
+  const shareMessage = `Este machote de "${learningModuleData.title}" de Umbral me está salvando! Tienes que probarlo, el diagnóstico es gratis.`
+  const appUrl = 'https://umbral.cr' // Replace with your actual app URL
+
     return (
     <div className="bg-slate-50/50">
       <div className="container mx-auto max-w-5xl px-4 py-12 sm:py-16 lg:px-8">
@@ -48,7 +52,11 @@ export default async function LearningPage({ params }: { params: Promise<{ topic
           <p className="text-lg text-slate-600 mt-2">Tu micro-dosis de estudio está lista. Concéntrate en una sección a la vez.</p>
         </header>
 
-        <LearningTabs learningData={learningModuleData} />
+        <LearningTabs 
+          learningData={learningModuleData} 
+          shareText={shareMessage}
+          shareUrl={appUrl}
+        />
       </div>
     </div>
   )

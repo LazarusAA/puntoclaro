@@ -186,6 +186,7 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
     )
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const getButtonVariant = (optionId: string): "outline" => {
     // Use outline variant consistently for all states to maintain border structure
     return 'outline'

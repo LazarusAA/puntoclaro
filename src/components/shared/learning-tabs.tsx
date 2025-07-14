@@ -7,12 +7,15 @@ import { Download } from 'lucide-react'
 import { useState } from 'react'
 import type { LearningModule } from '~/types/learning'
 import { PracticeQuiz } from './practice-quiz'
+import { ShareButton } from './share-button'
 
 interface LearningTabsProps {
   learningData: LearningModule;
+  shareText: string;
+  shareUrl: string;
 }
 
-export function LearningTabs({ learningData }: LearningTabsProps) {
+export function LearningTabs({ learningData, shareText, shareUrl }: LearningTabsProps) {
   const { title, explanation, machote } = learningData
   const [activeTab, setActiveTab] = useState('explicacion')
 
@@ -77,11 +80,12 @@ export function LearningTabs({ learningData }: LearningTabsProps) {
               <h3 className="font-semibold mb-2 text-lg">Errores Comunes:</h3>
               <p className="text-slate-700">{machote.common_mistakes[0]}</p>
             </div>
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col gap-3 md:flex-row md:gap-4">
               <Button className="w-full md:w-auto">
                 <Download className="mr-2 h-4 w-4" />
                 Descargar Machote en PDF
               </Button>
+              <ShareButton shareText={shareText} shareUrl={shareUrl} />
             </div>
           </CardContent>
         </Card>
