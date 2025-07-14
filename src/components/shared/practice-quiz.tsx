@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import confetti from 'canvas-confetti'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '~/components/ui/card'
 import { CheckCircle2, XCircle, RefreshCw } from 'lucide-react'
@@ -86,6 +87,44 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
 
   const currentQuestion = questions[currentQuestionIndex]
 
+  // Trigger confetti when quiz is completed with perfect score
+  useEffect(() => {
+    if (isCompleted && score === questions.length) {
+      const triggerConfetti = () => {
+        const end = Date.now() + 3 * 1000; // 3 seconds
+        const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+        const frame = () => {
+          if (Date.now() > end) return;
+
+          confetti({
+            particleCount: 2,
+            angle: 60,
+            spread: 55,
+            startVelocity: 60,
+            origin: { x: 0, y: 0.5 },
+            colors: colors,
+          });
+          confetti({
+            particleCount: 2,
+            angle: 120,
+            spread: 55,
+            startVelocity: 60,
+            origin: { x: 1, y: 0.5 },
+            colors: colors,
+          });
+
+          requestAnimationFrame(frame);
+        };
+
+        frame();
+      };
+
+      // Small delay to let the completion card render first
+      setTimeout(triggerConfetti, 100);
+    }
+  }, [isCompleted, score, questions.length])
+
   const handleOptionSelect = (optionId: string) => {
     if (selectedOption) return // Prevent changing answer
     setSelectedOption(optionId)
@@ -114,16 +153,28 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
   }
 
   if (isCompleted) {
+    const isPerfectScore = score === questions.length
+    const scorePercentage = Math.round((score / questions.length) * 100)
+    
     return (
       <Card className="text-center p-6">
         <CardHeader>
-          <CardTitle className="text-2xl">¡Práctica Completada!</CardTitle>
+          <CardTitle className={`text-2xl ${isPerfectScore ? 'text-green-600' : ''}`}>
+            {isPerfectScore ? '¡Perfecto!' : '¡Práctica Completada!'}
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-4xl font-bold mb-2">
+          <p className={`text-4xl font-bold mb-2 ${isPerfectScore ? 'text-green-600' : ''}`}>
             {score} / {questions.length}
           </p>
-          <p className="text-slate-600">¡Excelente trabajo! La práctica constante es la clave.</p>
+          <p className={`text-lg mb-2 ${isPerfectScore ? 'text-green-600 font-semibold' : ''}`}>
+            {scorePercentage}% correcto
+          </p>
+          <p className="text-slate-600">
+            {isPerfectScore 
+              ? '¡Increíble! Dominaste completamente el razonamiento deductivo.' 
+              : '¡Excelente trabajo! La práctica constante es la clave.'}
+          </p>
         </CardContent>
         <CardFooter className="flex justify-center">
           <Button onClick={handleRestart}>
@@ -172,7 +223,7 @@ export function PracticeQuiz({ questions = placeholderPracticeQuestions }: Pract
              disabled={!!selectedOption}
            >
              {selectedOption && option.id === currentQuestion.correctOptionId && (
-               <CheckCircle2 className="mr-3 h-6 w-6 text-gray-900 animate-bounce" />
+               <CheckCircle2 className="mr-3 h-6 w-6 text-gray-900" />
              )}
              {selectedOption === option.id && option.id !== currentQuestion.correctOptionId && (
                <XCircle className="mr-3 h-6 w-6 text-gray-900 animate-pulse" />
