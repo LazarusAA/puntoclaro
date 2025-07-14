@@ -1,6 +1,8 @@
 'use client' // This page will have client-side interactions (e.g., modals)
 
+import { useState } from 'react'
 import { ZonaRojaCard } from '~/components/shared/zona-roja-card'
+import { PaywallModal } from '~/components/shared/paywall-modal'
 
 // This placeholder data will be replaced by a call to our backend.
 // It reflects the kind of specific, actionable insights our AI will provide.
@@ -24,15 +26,13 @@ const zonasRojasData = [
 
 export default function DashboardPage() {
   const userName = 'Estudiante' // This will be fetched from Supabase auth.
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
 
   const handleCardClick = (isLocked: boolean, title: string) => {
     if (isLocked) {
-      // In the future, this will trigger our "Upgrade to Premium" modal.
-      alert(`La sección "${title}" es una función premium.`)
+      setIsPaywallOpen(true);
     } else {
-      // This will navigate the user to the corresponding learning module.
-      alert(`Navegando a la lección de "${title}"...`)
-      // Example: router.push(`/learn/${topicId}`)
+      alert(`Navegando a la lección de "${title}"...`);
     }
   }
 
@@ -60,6 +60,7 @@ export default function DashboardPage() {
             />
           ))}
         </div>
+        <PaywallModal isOpen={isPaywallOpen} onClose={() => setIsPaywallOpen(false)} />
       </div>
     </div>
   )
