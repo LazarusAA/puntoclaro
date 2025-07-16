@@ -14,14 +14,20 @@ import {
   DialogTrigger,
 } from '~/components/ui/dialog'
 import { FcGoogle } from "react-icons/fc";
+import { createClient } from '~/lib/supabase/client'
 
 /**
  * Login form component with email/password and Google OAuth options
  */
 const LoginForm = () => {
   const handleGoogleLogin = () => {
-    // TODO: Implement Google OAuth login with Supabase
-    console.log('Initiating Google Login...');
+    const supabase = createClient();
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    });
   };
   
   const handleEmailLogin = (e: React.FormEvent) => {
@@ -64,8 +70,13 @@ const LoginForm = () => {
  */
 const SignupForm = () => {
   const handleGoogleSignup = () => {
-    // TODO: Implement Google OAuth signup with Supabase
-    console.log('Initiating Google Signup...');
+    const supabase = createClient();
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${location.origin}/auth/callback`,
+      },
+    });
   };
   
   const handleEmailSignup = (e: React.FormEvent) => {
