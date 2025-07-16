@@ -1,32 +1,61 @@
 'use client' // This page will have client-side interactions (e.g., modals)
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { createClient } from '~/lib/supabase/client'
+import { type User } from '@supabase/supabase-js'
 import { ZonaRojaCard } from '~/components/shared/zona-roja-card'
 import { PaywallModal } from '~/components/shared/paywall-modal'
 
-// This placeholder data will be replaced by a call to our backend.
-// It reflects the kind of specific, actionable insights our AI will provide.
-const zonasRojasData = [
-  {
-    title: 'Razonamiento Deductivo',
-    description: 'Detectamos una oportunidad para fortalecer cómo aplicas reglas generales a problemas específicos.',
-    isLocked: false,
-  },
-  {
-    title: 'Análisis de Figuras',
-    description: 'Mejorar tu habilidad para identificar patrones en secuencias geométricas tendrá un gran impacto.',
-    isLocked: true,
-  },
-  {
-    title: 'Comprensión de Textos Complejos',
-    description: 'Dominar la inferencia en textos densos es clave para la sección verbal del examen.',
-    isLocked: true,
-  },
-]
-
 export default function DashboardPage() {
-  const userName = 'Estudiante' // This will be fetched from Supabase auth.
+  const supabase = createClient()
+  const [user, setUser] = useState<User | null>(null)
+  const [zonasRojas, setZonasRojas] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+
+  useEffect(() => {
+    const getSessionData = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        // This should ideally redirect to login, but for now, we'll just set an error.
+        setError('No se pudo encontrar al usuario. Por favor, inicia sesión de nuevo.')
+        setIsLoading(false)
+        return
+      }
+      setUser(user)
+
+      // Fetch the most recent completed diagnostic session for this user
+      const { data, error } = await supabase
+        .from('diagnostic_sessions')
+        .select('result_summary')
+        .eq('user_id', user.id)
+        .eq('status', 'completed')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single()
+      
+      if (error || !data) {
+        setError('No pudimos encontrar los resultados de tu diagnóstico.')
+        console.error('Error fetching diagnostic session:', error)
+        setIsLoading(false)
+        return
+      }
+
+      // The result_summary from the DB is the array of Zonas Rojas
+      if (data.result_summary && Array.isArray(data.result_summary)) {
+        // We'll add the isLocked property on the client-side for the UI
+        const resultsWithLockState = data.result_summary.map((zona: any, index: number) => ({
+          ...(zona || {}),
+          isLocked: index > 0, // The first one is unlocked, the rest are locked
+        }))
+        setZonasRojas(resultsWithLockState)
+      }
+      setIsLoading(false)
+    }
+
+    getSessionData()
+  }, [supabase])
 
   const handleCardClick = (isLocked: boolean, title: string) => {
     if (isLocked) {
@@ -37,31 +66,39 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="bg-slate-50/50">
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-        <header className="mb-12 max-w-3xl">
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            ¡Pura vida, {userName}!
-          </h1>
-          <p className="mt-4 text-xl text-slate-600">
-            Tu diagnóstico está listo. Este es tu plan de ataque. Enfócate en estas 3
-            áreas para ver el mayor progreso.
-          </p>
-        </header>
-        
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {zonasRojasData.map((zona) => (
-            <ZonaRojaCard
-              key={zona.title}
-              title={zona.title}
-              description={zona.description}
-              isLocked={zona.isLocked}
-              onClick={() => handleCardClick(zona.isLocked, zona.title)}
-            />
-          ))}
+    <div className="flex flex-col min-h-screen bg-slate-50/50">
+      <main className="flex-grow bg-slate-50/50">
+        <div className="container mx-auto px-4 py-12 sm:py-16 lg:px-8">
+          <header className="mb-10 md:mb-12">
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
+              ¡Pura vida, {user?.user_metadata.full_name || 'Estudiante'}!
+            </h1>
+            <p className="text-lg text-slate-600 mt-2 max-w-2xl">
+              Tu diagnóstico está listo. Este es tu plan de ataque. Enfócate en estas 3
+              áreas para ver el mayor progreso.
+            </p>
+          </header>
+          
+          {isLoading ? (
+            <p>Cargando tu plan de ataque...</p>
+          ) : error ? (
+            <p className="text-red-500">{error}</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              {zonasRojas.map((zona) => (
+                <ZonaRojaCard
+                  key={zona.title}
+                  title={zona.title}
+                  description={zona.description}
+                  isLocked={zona.isLocked}
+                  onClick={() => handleCardClick(zona.isLocked, zona.title)}
+                />
+              ))}
+            </div>
+          )}
         </div>
-        <PaywallModal isOpen={isPaywallOpen} onClose={() => setIsPaywallOpen(false)} />
-      </div>
+      </main>
+      <PaywallModal isOpen={isPaywallOpen} onClose={() => setIsPaywallOpen(false)} />
     </div>
   )
 }
