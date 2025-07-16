@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { createClient } from '~/lib/supabase/client'
 import { type User } from '@supabase/supabase-js'
+import { useSafeUserData } from '~/lib/user-utils'
 import { ZonaRojaCard } from '~/components/shared/zona-roja-card'
 import { PaywallModal } from '~/components/shared/paywall-modal'
 
@@ -12,7 +13,10 @@ export default function DashboardPage() {
   const [zonasRojas, setZonasRojas] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [isPaywallOpen, setIsPaywallOpen] = useState(false);
+  const [isPaywallOpen, setIsPaywallOpen] = useState(false)
+  
+  // Get safe user data with validation
+  const safeUserData = useSafeUserData(user)
 
   useEffect(() => {
     const getSessionData = async () => {
@@ -71,7 +75,7 @@ export default function DashboardPage() {
         <div className="container mx-auto px-4 py-12 sm:py-16 lg:px-8">
           <header className="mb-10 md:mb-12">
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
-              ¡Pura vida, {user?.user_metadata.full_name || 'Estudiante'}!
+              ¡Pura vida, {safeUserData?.fullName || 'Estudiante'}!
             </h1>
             <p className="text-lg text-slate-600 mt-2 max-w-2xl">
               Tu diagnóstico está listo. Este es tu plan de ataque. Enfócate en estas 3

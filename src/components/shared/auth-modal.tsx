@@ -15,38 +15,125 @@ import {
 } from '~/components/ui/dialog'
 import { FcGoogle } from "react-icons/fc";
 import { createClient } from '~/lib/supabase/client'
+import { logAuthError } from '~/lib/secure-logger'
 
 /**
  * Login form component with email/password and Google OAuth options
  */
 const LoginForm = () => {
-  const handleGoogleLogin = () => {
-    const supabase = createClient();
-    supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-  };
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const supabase = createClient()
+
+  const handleGoogleLogin = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+    } catch (err) {
+      setError('Error al iniciar sesión con Google. Intenta de nuevo.')
+      logAuthError(err, 'google_login')
+    } finally {
+      setIsLoading(false)
+    }
+  }
   
-  const handleEmailLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement email/password login with Supabase
-    console.log('Handling Email Login...');
-  };
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email.trim() || !password.trim()) {
+      setError('Por favor, completa todos los campos.')
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError(null)
+      
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      })
+      
+      if (error) {
+        // Log the actual error for debugging
+        console.error('Supabase login error:', error)
+        logAuthError(error, 'email_login', email)
+        
+        // Handle specific Supabase auth errors with user-friendly Spanish messages
+        const errorMessage = error.message.toLowerCase()
+        
+        if (errorMessage.includes('invalid login credentials') || errorMessage.includes('invalid credentials')) {
+          setError('Email o contraseña incorrectos.')
+        } else if (errorMessage.includes('email not confirmed')) {
+          setError('Por favor, confirma tu email antes de iniciar sesión.')
+        } else if (errorMessage.includes('too many requests') || errorMessage.includes('rate limit')) {
+          setError('Demasiados intentos. Espera un momento antes de intentar de nuevo.')
+        } else if (errorMessage.includes('user not found')) {
+          setError('No existe una cuenta con este email. ¿Quieres registrarte?')
+        } else if (errorMessage.includes('email address') && errorMessage.includes('invalid')) {
+          setError('El formato del email no es válido.')
+        } else {
+          setError('Error al iniciar sesión. Verifica tus credenciales.')
+        }
+        return
+      }
+      
+      // Success - auth provider will handle the state update
+      // No need to do anything here, the modal will close automatically
+      
+    } catch (err) {
+      setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
+      logAuthError(err, 'email_login', email)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <form onSubmit={handleEmailLogin} className="space-y-4">
+      {error && (
+        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
+      
       <div className="space-y-2">
         <Label htmlFor="email-login">Email</Label>
-        <Input id="email-login" type="email" placeholder="tu@email.com" required />
+        <Input 
+          id="email-login" 
+          type="email" 
+          placeholder="tu@email.com" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+          required 
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password-login">Contraseña</Label>
-        <Input id="password-login" type="password" required />
+        <Input 
+          id="password-login" 
+          type="password" 
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+          required 
+        />
       </div>
-      <Button type="submit" className="w-full">Iniciar Sesión</Button>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
+      </Button>
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -57,9 +144,15 @@ const LoginForm = () => {
           </span>
         </div>
       </div>
-      <Button variant="outline" className="w-full" type="button" onClick={handleGoogleLogin}>
+      <Button 
+        variant="outline" 
+        className="w-full" 
+        type="button" 
+        onClick={handleGoogleLogin}
+        disabled={isLoading}
+      >
         <FcGoogle className="mr-2 h-4 w-4" />
-        Google
+        {isLoading ? 'Conectando...' : 'Google'}
       </Button>
     </form>
   )
@@ -69,33 +162,158 @@ const LoginForm = () => {
  * Signup form component with email/password and Google OAuth options
  */
 const SignupForm = () => {
-  const handleGoogleSignup = () => {
-    const supabase = createClient();
-    supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${location.origin}/auth/callback`,
-      },
-    });
-  };
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+
+  const supabase = createClient()
+
+  const handleGoogleSignup = async () => {
+    try {
+      setIsLoading(true)
+      setError(null)
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${location.origin}/auth/callback`,
+        },
+      })
+      if (error) throw error
+    } catch (err) {
+      setError('Error al registrarte con Google. Intenta de nuevo.')
+      logAuthError(err, 'google_signup')
+    } finally {
+      setIsLoading(false)
+    }
+  }
   
-  const handleEmailSignup = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: Implement email/password signup with Supabase
-    console.log('Handling Email Signup...');
-  };
+  const validatePassword = (password: string): string | null => {
+    if (password.length < 8) {
+      return 'La contraseña debe tener al menos 8 caracteres.'
+    }
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
+      return 'La contraseña debe contener al menos una mayúscula, una minúscula y un número.'
+    }
+    return null
+  }
+
+  const handleEmailSignup = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (!email.trim() || !password.trim()) {
+      setError('Por favor, completa todos los campos.')
+      return
+    }
+
+    // Validate email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      setError('Por favor, ingresa un email válido.')
+      return
+    }
+
+    // Validate password strength
+    const passwordError = validatePassword(password)
+    if (passwordError) {
+      setError(passwordError)
+      return
+    }
+
+    try {
+      setIsLoading(true)
+      setError(null)
+      
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+      })
+      
+      if (error) {
+        // Log the actual error for debugging
+        console.error('Supabase signup error:', error)
+        logAuthError(error, 'email_signup', email)
+        
+        // Handle specific Supabase auth errors with user-friendly Spanish messages
+        const errorMessage = error.message.toLowerCase()
+        
+        if (errorMessage.includes('user already registered')) {
+          setError('Este email ya está registrado. Intenta iniciar sesión.')
+        } else if (errorMessage.includes('password should be at least')) {
+          setError('La contraseña debe tener al menos 6 caracteres.')
+        } else if (errorMessage.includes('unable to validate email') || errorMessage.includes('invalid format')) {
+          setError('El formato del email no es válido.')
+        } else if (errorMessage.includes('email address') && errorMessage.includes('invalid')) {
+          setError('El email ingresado no es válido. Por favor, usa un email real.')
+        } else if (errorMessage.includes('signup is disabled')) {
+          setError('El registro está temporalmente deshabilitado.')
+        } else if (errorMessage.includes('signups not allowed')) {
+          setError('El registro no está habilitado en este momento.')
+        } else if (errorMessage.includes('email rate limit exceeded')) {
+          setError('Demasiados emails enviados. Espera unos minutos antes de intentar de nuevo.')
+        } else if (errorMessage.includes('weak password')) {
+          setError('La contraseña es muy débil. Usa una contraseña más segura.')
+        } else if (errorMessage.includes('email not confirmed')) {
+          setError('Por favor, confirma tu email antes de continuar.')
+        } else {
+          setError('Error al crear la cuenta. Verifica tus datos e intenta de nuevo.')
+        }
+        return
+      }
+      
+      // Success - user is automatically logged in
+      // The AuthProvider will detect the auth state change and close the modal
+      // No need to show a success message since the user is now logged in
+      
+    } catch (err) {
+      setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
+      logAuthError(err, 'email_signup', email)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+
 
   return (
     <form onSubmit={handleEmailSignup} className="space-y-4">
+      {error && (
+        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-md">
+          {error}
+        </div>
+      )}
+      
       <div className="space-y-2">
         <Label htmlFor="email-signup">Email</Label>
-        <Input id="email-signup" type="email" placeholder="tu@email.com" required />
+        <Input 
+          id="email-signup" 
+          type="email" 
+          placeholder="tu@email.com" 
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={isLoading}
+          required 
+        />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password-signup">Contraseña</Label>
-        <Input id="password-signup" type="password" required />
+        <Input 
+          id="password-signup" 
+          type="password" 
+          placeholder="••••••••"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          disabled={isLoading}
+          required 
+        />
+        <p className="text-xs text-gray-500">
+          Mínimo 8 caracteres con al menos una mayúscula, una minúscula y un número.
+        </p>
       </div>
-      <Button type="submit" className="w-full">Crear Cuenta</Button>
+      <Button type="submit" className="w-full" disabled={isLoading}>
+        {isLoading ? 'Creando cuenta...' : 'Crear Cuenta'}
+      </Button>
        <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -106,9 +324,15 @@ const SignupForm = () => {
           </span>
         </div>
       </div>
-      <Button variant="outline" className="w-full" type="button" onClick={handleGoogleSignup}>
+      <Button 
+        variant="outline" 
+        className="w-full" 
+        type="button" 
+        onClick={handleGoogleSignup}
+        disabled={isLoading}
+      >
         <FcGoogle className="mr-2 h-4 w-4" />
-        Google
+        {isLoading ? 'Conectando...' : 'Google'}
       </Button>
     </form>
   )

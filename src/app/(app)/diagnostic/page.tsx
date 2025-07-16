@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { DiagnosticQuiz } from '~/components/shared/diagnostic-quiz'
 import { DiagnosticErrorBoundary } from '~/components/shared/error-boundary'
-import { Navbar1 } from '~/components/layouts/main-nav'
-import { Footer7 } from '~/components/layouts/site-footer'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import { Button } from '~/components/ui/button'
 import { createClient } from '~/lib/supabase/client'
@@ -247,18 +246,10 @@ export default function DiagnosticPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-slate-50">
-      <Navbar1 
-        menu={[]} 
-        logo={{ url: "/", src: "/logo.svg", alt: "Umbral Logo", title: "Umbral" }}
-        auth={{ login: { title: "Iniciar sesión", url: "#" }, signup: { title: "Registrarse", url: "#" } }}
-      />
-      <main className="flex-grow flex items-center justify-center p-4 py-12 sm:py-24">
-        <DiagnosticErrorBoundary>
-          {renderContent()}
-        </DiagnosticErrorBoundary>
-      </main>
-      <Footer7 />
-    </div>
+    <main className="flex items-center justify-center p-4 py-12 sm:py-24 min-h-screen bg-slate-50">
+      <DiagnosticErrorBoundary>
+        {renderContent()}
+      </DiagnosticErrorBoundary>
+    </main>
   );
 } 

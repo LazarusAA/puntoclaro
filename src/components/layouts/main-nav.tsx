@@ -1,20 +1,8 @@
-'use client'
 
-import { useEffect, useState } from 'react'
-import { createClient } from '~/lib/supabase/client'
-import type { User } from '@supabase/supabase-js'
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '~/components/ui/dropdown-menu'
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { User } from '@supabase/supabase-js'
 
 import {
   Accordion,
@@ -39,7 +27,7 @@ import {
   SheetTrigger,
 } from "~/components/ui/sheet";
 import { ScrollProgress } from "~/components/magicui/scroll-progress";
-import { LoginButton, SignupButton } from "~/components/shared/auth-modal";
+import { AuthSection } from "./auth-section";
 
 interface MenuItem {
   title: string;
@@ -153,29 +141,6 @@ const Navbar1 = ({
     signup: { title: "Sign up", url: "#" },
   },
 }: Navbar1Props) => {
-  const supabase = createClient();
-  const [user, setUser] = useState<User | null>(null);
-
-  useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
-    };
-
-    getUser();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => {
-      subscription.unsubscribe();
-    };
-  }, [supabase.auth]);
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
 
   return (
     <>
@@ -199,22 +164,16 @@ const Navbar1 = ({
                 </NavigationMenu>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {user ? (
-                // If the user is logged in, show a user navigation dropdown
-                <UserNav user={user} onSignOut={handleSignOut} />
-              ) : (
-                // If the user is logged out, show login and signup buttons
-                <>
-                  <LoginButton variant="outline" size="sm">
-                    {auth.login.title}
-                  </LoginButton>
-                  <SignupButton size="sm">
-                    {auth.signup.title}
-                  </SignupButton>
-                </>
-              )}
-            </div>
+            <AuthSection
+              loginTitle={auth.login.title}
+              signupTitle={auth.signup.title}
+              className="flex items-center gap-3"
+              buttonProps={{
+                loginVariant: "outline",
+                loginSize: "sm",
+                signupSize: "sm"
+              }}
+            />
           </nav>
 
           {/* Mobile Menu */}
@@ -251,22 +210,16 @@ const Navbar1 = ({
                       {menu.map((item) => renderMobileMenuItem(item))}
                     </Accordion>
 
-                    <div className="flex flex-col gap-3">
-                      {user ? (
-                        // If the user is logged in, show a user navigation dropdown
-                        <UserNav user={user} onSignOut={handleSignOut} />
-                      ) : (
-                        // If the user is logged out, show login and signup buttons
-                        <>
-                          <LoginButton variant="outline" className="w-full">
-                            {auth.login.title}
-                          </LoginButton>
-                          <SignupButton className="w-full">
-                            {auth.signup.title}
-                          </SignupButton>
-                        </>
-                      )}
-                    </div>
+                    <AuthSection
+                      loginTitle={auth.login.title}
+                      signupTitle={auth.signup.title}
+                      className="flex flex-col gap-3"
+                      buttonProps={{
+                        loginVariant: "outline",
+                        loginClassName: "w-full",
+                        signupClassName: "w-full"
+                      }}
+                    />
                   </div>
                 </SheetContent>
               </Sheet>
@@ -349,34 +302,7 @@ const SubMenuLink = ({ item }: { item: MenuItem }) => {
   );
 };
 
-const UserNav = ({ user, onSignOut }: { user: User; onSignOut: () => void }) => (
-  <DropdownMenu>
-    <DropdownMenuTrigger asChild>
-      <Button variant="ghost" className="relative h-10 w-10 rounded-full">
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={user.user_metadata.avatar_url} alt={user.user_metadata.full_name || 'User'} />
-          <AvatarFallback>{user.email?.charAt(0).toUpperCase()}</AvatarFallback>
-        </Avatar>
-      </Button>
-    </DropdownMenuTrigger>
-    <DropdownMenuContent className="w-56" align="end" forceMount>
-      <DropdownMenuLabel className="font-normal">
-        <div className="flex flex-col space-y-1">
-          <p className="text-sm font-medium leading-none">{user.user_metadata.full_name || 'Estudiante'}</p>
-          <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
-        </div>
-      </DropdownMenuLabel>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem asChild>
-        <Link href="/dashboard">Dashboard</Link>
-      </DropdownMenuItem>
-      <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={onSignOut}>
-        Cerrar Sesión
-      </DropdownMenuItem>
-    </DropdownMenuContent>
-  </DropdownMenu>
-);
+
 
 // Export the enhanced navbar component as MainNav for the new integration
 export { Navbar1 as MainNav };
