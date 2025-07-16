@@ -48,8 +48,8 @@ const Hero12 = () => {
             
             <AnimateOnScroll animation="scaleUp" delay={0.5}>
               <div className="mt-8 flex flex-col sm:flex-row justify-center gap-4 items-center">
-                <Button size="lg" className="w-full sm:w-auto text-lg px-8 py-6 shadow-sm hover:shadow transition-all hover:scale-105">
-                  Empezar mi Diagnóstico GRATIS
+                <Button size="lg" asChild className="w-full sm:w-auto text-lg px-8 py-6 shadow-sm hover:shadow transition-all hover:scale-105">
+                  <a href="/diagnostic">Empezar mi Diagnóstico GRATIS</a>
                 </Button>
                 <Button variant="outline" size="lg" asChild className="w-full sm:w-auto group text-lg px-8 py-6 flex items-center justify-center">
                   <a href="#problem-section" className="scroll-smooth">

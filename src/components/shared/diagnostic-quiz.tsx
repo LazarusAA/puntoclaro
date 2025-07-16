@@ -1,117 +1,90 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
 
-// This is a placeholder type. In the real app, this will come from our database types.
+// Define the types for the data we expect to receive and send
 type Question = {
-  id: string
-  text: string
-  options: {
-    id: string
-    text: string
-  }[]
-}
+  id: string;
+  content: { text: string };
+  topic_id: string;
+  question_options: {
+    id: string;
+    text: string;
+    is_correct: boolean;
+  }[];
+};
 
-// Define the exam type
-type ExamType = 'ucr' | 'tec';
+type AnswerPayload = {
+  questionId: string;
+  selectedOptionId: string;
+  isCorrect: boolean;
+  responseTimeMs: number;
+  topicId: string;
+};
 
-// Component props interface
-interface DiagnosticQuizProps {
-  examType: ExamType;
-}
+type DiagnosticQuizProps = {
+  questions: Question[];
+  onComplete: (answers: AnswerPayload[]) => void;
+};
 
-// Placeholder questions for building the UI.
-const placeholderQuestions: Question[] = [
-  {
-    id: 'q1',
-    text: '¿Qué número continúa la siguiente secuencia: 3, 7, 11, 15, ___?',
-    options: [
-      { id: 'q1-o1', text: '18' },
-      { id: 'q1-o2', text: '19' },
-      { id: 'q1-o3', text: '20' },
-      { id: 'q1-o4', text: '21' },
-    ],
-  },
-  {
-    id: 'q2',
-    text: 'Yigüirro es a Pájaro como...',
-    options: [
-      { id: 'q2-o1', text: 'Guápil es a Árbol' },
-      { id: 'q2-o2', text: 'Río es a Agua' },
-      { id: 'q2-o3', text: 'Lapa es a Rojo' },
-      { id: 'q2-o4', text: 'Mariposa es a Vuelo' },
-    ],
-  },
-  // Add 8-10 more placeholder questions to simulate the full flow.
-  {
-    id: 'q3',
-    text: 'This is the final question. Clicking an option will finish the quiz.',
-    options: [
-      { id: 'q3-o1', text: 'Finish' },
-      { id: 'q3-o2', text: 'Finish' },
-      { id: 'q3-o3', text: 'Finish' },
-      { id: 'q3-o4', text: 'Finish' },
-    ],
-  },
-]
-
-export function DiagnosticQuiz({ examType }: DiagnosticQuizProps) {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [completedQuestions, setCompletedQuestions] = useState(0)
-  const [isCompleted, setIsCompleted] = useState(false)
-
-  // TODO: Use examType to fetch exam-specific questions from the database
-  console.log('Quiz initialized for exam type:', examType)
+export function DiagnosticQuiz({ questions, onComplete }: DiagnosticQuizProps) {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [userAnswers, setUserAnswers] = useState<AnswerPayload[]>([]);
+  const [startTime, setStartTime] = useState(Date.now());
 
   const handleAnswerClick = (optionId: string) => {
-    // In the real app, we would send the answer to our backend here.
-    console.log(`User answered question ${placeholderQuestions[currentQuestionIndex].id} with option ${optionId}`)
+    const currentQuestion = questions[currentQuestionIndex];
+    const selectedOption = currentQuestion.question_options.find(opt => opt.id === optionId);
+    
+    if (!selectedOption) return;
 
-    // Increment completed questions count
-    setCompletedQuestions(completedQuestions + 1)
+    const responseTime = Date.now() - startTime;
+    
+    const answer: AnswerPayload = {
+      questionId: currentQuestion.id,
+      selectedOptionId: optionId,
+      isCorrect: selectedOption.is_correct,
+      responseTimeMs: responseTime,
+      topicId: currentQuestion.topic_id,
+    };
 
-    // Move to the next question or complete the quiz.
-    if (currentQuestionIndex < placeholderQuestions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1)
+    const newAnswers = [...userAnswers, answer];
+    setUserAnswers(newAnswers);
+
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+      setStartTime(Date.now()); // Reset timer for the next question
     } else {
-      setIsCompleted(true)
-      // Here we would trigger the navigation to the dashboard.
-      console.log('Quiz completed!')
+      onComplete(newAnswers); // Send all answers back to the parent page
     }
+  };
+
+  if (!questions || questions.length === 0) {
+    return <div>Cargando preguntas...</div>;
   }
 
-  if (isCompleted) {
-    return (
-      <div className="text-center">
-        <h2 className="text-2xl font-bold">¡Diagnóstico Completado!</h2>
-        <p className="mt-2">Analizando tus resultados...</p>
-        {/* In the real app, a spinner would show before redirecting. */}
-      </div>
-    )
-  }
-
-  const currentQuestion = placeholderQuestions[currentQuestionIndex]
-  const progressValue = (completedQuestions / placeholderQuestions.length) * 100
+  const currentQuestion = questions[currentQuestionIndex];
+  const progressValue = ((currentQuestionIndex + 1) / questions.length) * 100;
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
+    <Card className="w-full max-w-2xl mx-auto animate-in fade-in-50 duration-500">
       <CardHeader>
         <div className="mb-4">
           <p className="text-sm font-medium text-center mb-2">
-            Pregunta {currentQuestionIndex + 1} de {placeholderQuestions.length}
+            Pregunta {currentQuestionIndex + 1} de {questions.length}
           </p>
           <Progress value={progressValue} />
         </div>
         <CardTitle className="text-2xl leading-relaxed text-center">
-          {currentQuestion.text}
+          {currentQuestion.content.text}
         </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-          {currentQuestion.options.map((option) => (
+          {currentQuestion.question_options.map((option) => (
             <Button
               key={option.id}
               variant="outline"
@@ -125,5 +98,5 @@ export function DiagnosticQuiz({ examType }: DiagnosticQuizProps) {
         </div>
       </CardContent>
     </Card>
-  )
+  );
 } 

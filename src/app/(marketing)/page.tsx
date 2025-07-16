@@ -109,7 +109,7 @@ export default function LandingPage() {
           buttons={{
             primary: {
               text: "Empezar mi Diagnóstico GRATIS",
-              url: "#diagnostico"
+              url: "/diagnostic"
             }
           }}
         />
