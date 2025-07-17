@@ -13,9 +13,10 @@ interface LearningTabsProps {
   learningData: LearningModule;
   shareText: string;
   shareUrl: string;
+  topicId: string;
 }
 
-export function LearningTabs({ learningData, shareText, shareUrl }: LearningTabsProps) {
+export function LearningTabs({ learningData, shareText, shareUrl, topicId }: LearningTabsProps) {
   const { title, explanation, machote } = learningData
   const [activeTab, setActiveTab] = useState('explicacion')
 
@@ -98,7 +99,7 @@ export function LearningTabs({ learningData, shareText, shareUrl }: LearningTabs
             <CardDescription>Es hora de poner a prueba lo que aprendiste con 5 preguntas sobre {title}.</CardDescription>
           </CardHeader>
           <CardContent>
-            <PracticeQuiz />
+            <PracticeQuiz topicId={topicId} />
           </CardContent>
         </Card>
       )}

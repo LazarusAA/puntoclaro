@@ -89,7 +89,7 @@ export default async function LearningPage({ params }: { params: Promise<{ topic
     }
 
     if (learningModule) {
-      return <LearningTabs learningData={learningModule} shareText={shareMessage} shareUrl={appUrl} />;
+      return <LearningTabs learningData={learningModule} shareText={shareMessage} shareUrl={appUrl} topicId={topicId} />;
     }
 
     return <p>Cargando...</p>; // Fallback loading state
