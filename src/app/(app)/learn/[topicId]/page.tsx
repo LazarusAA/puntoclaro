@@ -1,43 +1,102 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { LearningTabs } from '~/components/shared/learning-tabs'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
 import type { LearningModule } from '~/types/learning'
+import { headers } from 'next/headers'
 
-// This placeholder data will be replaced by a call to our backend using the topicId.
-const learningModuleData: LearningModule = {
-  title: 'Razonamiento Deductivo',
-  explanation: {
-    validation: 'Este tipo de razonamiento parece complicado, pero en realidad es algo que usas todos los días. Vamos a ponerle nombre.',
-    analogy: 'Imagina que sabes una regla general: "Todos los buses de Sabana-Estadio pasan por La Sabana". Si ves el bus de Sabana-Estadio, puedes deducir con 100% de certeza que pasará por La Sabana. Eso es razonamiento deductivo.',
-    core_concept: 'Consiste en partir de una regla general (una premisa) para llegar a una conclusión específica y lógicamente inevitable. Si la regla es verdadera, la conclusión también lo es.'
-  },
-  machote: {
-    title: 'El Machote para el Razonamiento Deductivo',
-    steps: [
-      'Paso 1: Identifica la regla general o "premisa mayor". ¿Cuál es el hecho universal que te dan?',
-      'Paso 2: Identifica el caso específico o "premisa menor". ¿Qué información particular te están dando?',
-      'Paso 3: Aplica la regla general al caso específico para encontrar la única conclusión lógica.',
-    ],
-    common_mistakes: [
-      '¡OJO! No confundir con el razonamiento inductivo, que es sacar una regla general a partir de casos específicos (y que no siempre es 100% seguro).'
-    ]
+// This function will fetch the data on the server before the page is rendered.
+async function getLearningModule(topicId: string): Promise<{ data?: LearningModule; message?: string; error?: string }> {
+  // Production-grade: Direct server-side API call
+  const headersList = await headers();
+  const cookie = headersList.get('cookie') ?? '';
+  
+  // Use absolute URL for same-domain server-side requests
+  const baseUrl = process.env.VERCEL_URL 
+    ? `https://${process.env.VERCEL_URL}`
+    : process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  
+  try {
+    const response = await fetch(`${baseUrl}/api/learn/${topicId}`, {
+      headers: { 
+        cookie,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store', // We want fresh data for each user session
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.details || 'Failed to fetch learning module.');
+    }
+    
+    // The API returns different structures for success, no-errors, or failure.
+    if (data.code === 'NO_ERRORS_FOUND') {
+      return { message: data.message };
+    }
+
+    if (data.learningModule) {
+      return { data: data.learningModule };
+    }
+
+    return { error: 'Invalid response from server.' };
+
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+    console.error("Fetch error in LearningPage:", errorMessage);
+    return { error: errorMessage };
   }
 }
 
-// The page receives `params` which contains the dynamic parts of the URL.
+
 export default async function LearningPage({ params }: { params: Promise<{ topicId: string }> }) {
-  // In a real app, you would use `params.topicId` to fetch this data.
-  
-  // For now, we'll use the topicId for future integration
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { topicId } = await params
+  const { topicId } = await params;
+  const { data: learningModule, message, error } = await getLearningModule(topicId);
 
-  // Share configuration
-  const shareMessage = `Este machote de "${learningModuleData.title}" de Umbral me está salvando! Tienes que probarlo, el diagnóstico es gratis.`
-  const appUrl = 'https://umbral.cr' // Replace with your actual app URL
+  // Default title if the fetch fails or is in a different state
+  const title = learningModule?.title || 'Módulo de Estudio';
 
-    return (
-    <div className="bg-slate-50/50">
+  const shareMessage = `Este machote de "${title}" de Umbral me está salvando! Tienes que probarlo, el diagnóstico es gratis.`
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://umbral.cr'
+
+  const renderContent = () => {
+    if (error) {
+      return (
+        <Card>
+          <CardHeader>
+            <CardTitle>Ocurrió un Error</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>No pudimos cargar tu módulo de aprendizaje. Por favor, intenta de nuevo.</p>
+            <p className="text-sm text-muted-foreground mt-2">{error}</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (message) {
+      return (
+        <Card className="text-center">
+          <CardHeader>
+            <CardTitle>¡Felicidades!</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-lg">{message}</p>
+          </CardContent>
+        </Card>
+      );
+    }
+
+    if (learningModule) {
+      return <LearningTabs learningData={learningModule} shareText={shareMessage} shareUrl={appUrl} />;
+    }
+
+    return <p>Cargando...</p>; // Fallback loading state
+  }
+
+  return (
+    <div className="bg-slate-50/50 min-h-screen">
       <div className="container mx-auto max-w-5xl px-4 py-12 sm:py-16 lg:px-8">
         {/* Navigation back to dashboard */}
         <div className="mb-8">
@@ -48,16 +107,12 @@ export default async function LearningPage({ params }: { params: Promise<{ topic
         </div>
 
         <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{learningModuleData.title}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-tight">{title}</h1>
           <p className="text-lg text-slate-600 mt-2">Tu micro-dosis de estudio está lista. Concéntrate en una sección a la vez.</p>
         </header>
 
-        <LearningTabs 
-          learningData={learningModuleData} 
-          shareText={shareMessage}
-          shareUrl={appUrl}
-        />
+        {renderContent()}
       </div>
     </div>
-  )
+  );
 } 

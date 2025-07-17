@@ -1,6 +1,7 @@
 'use client' // This page will have client-side interactions (e.g., modals)
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '~/lib/supabase/client'
 import { type User } from '@supabase/supabase-js'
 import { useSafeUserData } from '~/lib/user-utils'
@@ -9,6 +10,7 @@ import { PaywallModal } from '~/components/shared/paywall-modal'
 
 export default function DashboardPage() {
   const supabase = createClient()
+  const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
   const [zonasRojas, setZonasRojas] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -48,12 +50,32 @@ export default function DashboardPage() {
 
       // The result_summary from the DB is the array of Zonas Rojas
       if (data.result_summary && Array.isArray(data.result_summary)) {
-        // We'll add the isLocked property on the client-side for the UI
-        const resultsWithLockState = data.result_summary.map((zona: any, index: number) => ({
+        // Map topic titles to topic IDs
+        const topicTitles = data.result_summary.map((zona: any) => zona.title).filter(Boolean)
+        
+        // Fetch topic IDs for the zona roja titles
+        const { data: topicsData, error: topicsError } = await supabase
+          .from('topics')
+          .select('id, name')
+          .in('name', topicTitles)
+        
+        if (topicsError) {
+          console.error('Error fetching topic IDs:', topicsError)
+        }
+        
+        // Create a map of topic names to IDs
+        const topicNameToId = new Map(
+          topicsData?.map(topic => [topic.name, topic.id]) || []
+        )
+        
+        // Add isLocked property and topic IDs to the results
+        const resultsWithLockStateAndIds = data.result_summary.map((zona: any, index: number) => ({
           ...(zona || {}),
           isLocked: index > 0, // The first one is unlocked, the rest are locked
+          topicId: topicNameToId.get(zona.title) || null,
         }))
-        setZonasRojas(resultsWithLockState)
+        
+        setZonasRojas(resultsWithLockStateAndIds)
       }
       setIsLoading(false)
     }
@@ -61,11 +83,15 @@ export default function DashboardPage() {
     getSessionData()
   }, [supabase])
 
-  const handleCardClick = (isLocked: boolean, title: string) => {
+  const handleCardClick = (isLocked: boolean, title: string, topicId?: string) => {
     if (isLocked) {
       setIsPaywallOpen(true);
+    } else if (topicId) {
+      // Navigate to the learning page with the topic ID
+      router.push(`/learn/${topicId}`);
     } else {
-      alert(`Navegando a la lección de "${title}"...`);
+      // Fallback if no topic ID is found
+      setError(`No se pudo encontrar el ID del tema para "${title}". Por favor, contacta soporte.`);
     }
   }
 
@@ -95,7 +121,7 @@ export default function DashboardPage() {
                   title={zona.title}
                   description={zona.description}
                   isLocked={zona.isLocked}
-                  onClick={() => handleCardClick(zona.isLocked, zona.title)}
+                  onClick={() => handleCardClick(zona.isLocked, zona.title, zona.topicId)}
                 />
               ))}
             </div>

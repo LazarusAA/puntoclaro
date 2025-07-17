@@ -74,6 +74,26 @@ export async function POST(request: Request) {
       );
     }
 
+    // 1.1. --- ENSURE USER EXISTS IN USERS TABLE ---
+    const { error: userUpsertError } = await supabase
+      .from('users')
+      .upsert({
+        id: user.id,
+        full_name: user.user_metadata?.full_name || null,
+        avatar_url: user.user_metadata?.avatar_url || null,
+      }, {
+        onConflict: 'id',
+        ignoreDuplicates: false
+      });
+
+    if (userUpsertError) {
+      console.error('Failed to ensure user exists:', userUpsertError);
+      return NextResponse.json(
+        { error: 'Failed to initialize user', code: 'USER_INIT_ERROR' }, 
+        { status: 500 }
+      );
+    }
+
     // 2. --- RATE LIMITING ---
     if (!checkRateLimit(user.id)) {
       return NextResponse.json(
