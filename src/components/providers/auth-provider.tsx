@@ -21,6 +21,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [sessionExpired, setSessionExpired] = useState(false)
 
+  const refreshSession = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.refreshSession()
+      
+      if (error) {
+        if (error.message.includes('refresh_token_not_found') || 
+            error.message.includes('invalid_refresh_token')) {
+          setSessionExpired(true)
+          setUser(null)
+        } else {
+          logAuthError(error, 'refresh_session')
+        }
+      } else {
+        setUser(session?.user ?? null)
+        setSessionExpired(false)
+      }
+    } catch (error) {
+      logAuthError(error, 'refresh_session')
+      setSessionExpired(true)
+      setUser(null)
+    }
+  }
+
   useEffect(() => {
     let refreshTimer: NodeJS.Timeout | null = null
 
@@ -107,29 +130,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       logAuthError(error, 'sign_out')
     } finally {
       setIsLoading(false)
-    }
-  }
-
-  const refreshSession = async () => {
-    try {
-      const { data: { session }, error } = await supabase.auth.refreshSession()
-      
-      if (error) {
-        if (error.message.includes('refresh_token_not_found') || 
-            error.message.includes('invalid_refresh_token')) {
-          setSessionExpired(true)
-          setUser(null)
-        } else {
-          logAuthError(error, 'refresh_session')
-        }
-      } else {
-        setUser(session?.user ?? null)
-        setSessionExpired(false)
-      }
-    } catch (error) {
-      logAuthError(error, 'refresh_session')
-      setSessionExpired(true)
-      setUser(null)
     }
   }
 

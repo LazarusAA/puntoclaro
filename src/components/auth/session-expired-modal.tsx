@@ -22,7 +22,7 @@ export function SessionExpiredModal() {
     setIsRefreshing(true)
     try {
       await refreshSession()
-    } catch (error) {
+    } catch {
       // If refresh fails, show auth modal
       setShowAuthModal(true)
     } finally {

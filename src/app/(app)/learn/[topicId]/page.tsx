@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { LearningTabs } from '~/components/shared/learning-tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import type { LearningModule } from '~/types/learning'
 import { headers } from 'next/headers'
 

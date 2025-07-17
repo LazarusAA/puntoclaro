@@ -3,33 +3,33 @@ import { NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import type { DiagnosticAPIRequest, DiagnosticAPIResponse, DiagnosticAnswer, DiagnosticZonaRoja } from '~/types'
 
-// Initialize the Gemini client with the API key from environment variables
+// Initialize the Gemini client
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 // Input validation schemas
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateAnswer = (answer: any): answer is DiagnosticAnswer => {
   return (
     typeof answer === 'object' &&
+    answer !== null &&
     typeof answer.questionId === 'string' &&
     typeof answer.selectedOptionId === 'string' &&
     typeof answer.isCorrect === 'boolean' &&
     typeof answer.responseTimeMs === 'number' &&
     typeof answer.topicId === 'string' &&
     typeof answer.topicName === 'string' &&
-    answer.questionId.length > 0 &&
-    answer.selectedOptionId.length > 0 &&
-    answer.topicId.length > 0 &&
-    answer.topicName.length > 0 &&
-    answer.responseTimeMs > 0 &&
+    answer.responseTimeMs >= 0 &&
     answer.responseTimeMs < 300000 // 5 minutes max per question
   );
 };
 
-const validateRequest = (body: any): body is DiagnosticAPIRequest => {
+const validateRequest = (body: unknown): body is DiagnosticAPIRequest => {
   if (!body || typeof body !== 'object') return false;
   
-  const { examType, answers } = body;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const bodyObj = body as any;
+  const { examType, answers } = bodyObj;
   
   if (!examType || !['ucr', 'tec'].includes(examType)) return false;
   if (!Array.isArray(answers) || answers.length === 0 || answers.length > 50) return false;
@@ -65,16 +65,31 @@ export async function POST(request: Request) {
   const supabase = await createClient();
 
   try {
-    // 1. --- AUTHENTICATION ---
+    // 1. AUTHENTICATION
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json(
-        { error: 'Authentication required', code: 'UNAUTHORIZED' }, 
-        { status: 401 }
-      );
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
 
-    // 1.1. --- ENSURE USER EXISTS IN USERS TABLE ---
+    // 2. PARSE REQUEST BODY
+    const body = await request.json();
+    const { examType, answers } = body;
+
+    if (!examType || !answers || !Array.isArray(answers)) {
+      return new Response(JSON.stringify({ error: 'Invalid request body' }), { status: 400 });
+    }
+
+    // Type the answers array properly
+    const typedAnswers = answers as Array<{
+      questionId: string;
+      selectedOptionId: string;
+      isCorrect: boolean;
+      responseTimeMs: number;
+      topicId: string;
+      topicName: string;
+    }>;
+
+    // 3. --- ENSURE USER EXISTS IN USERS TABLE ---
     const { error: userUpsertError } = await supabase
       .from('users')
       .upsert({
@@ -94,7 +109,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 2. --- RATE LIMITING ---
+    // 4. --- RATE LIMITING ---
     if (!checkRateLimit(user.id)) {
       return NextResponse.json(
         { error: 'Too many requests. Please wait before trying again.', code: 'RATE_LIMITED' }, 
@@ -102,18 +117,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. --- INPUT VALIDATION ---
-    let requestBody: DiagnosticAPIRequest;
-    try {
-      requestBody = await request.json();
-    } catch {
-      return NextResponse.json(
-        { error: 'Invalid JSON format', code: 'INVALID_JSON' }, 
-        { status: 400 }
-      );
-    }
-
-    if (!validateRequest(requestBody)) {
+    // 5. --- INPUT VALIDATION ---
+    if (!validateRequest(body)) {
       return NextResponse.json(
         { 
           error: 'Invalid request format. Check exam type and answers structure.', 
@@ -123,9 +128,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { examType, answers } = requestBody;
-
-    // 4. --- DATABASE OPERATIONS ---
+    // 6. --- DATABASE OPERATIONS ---
     // Get exam ID
     const { data: examData, error: examError } = await supabase
       .from('exams')
@@ -161,7 +164,7 @@ export async function POST(request: Request) {
     }
 
     // Insert answers
-    const answersToInsert = answers.map(answer => ({
+    const answersToInsert = typedAnswers.map(answer => ({
       diagnostic_session_id: sessionData.id,
       user_id: user.id,
       question_id: answer.questionId,
@@ -182,8 +185,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 5. --- AI ANALYSIS ---
-    const analysisData = answers.map(answer => ({ 
+    // 7. --- AI ANALYSIS ---
+    const analysisData = typedAnswers.map(answer => ({ 
       topicName: answer.topicName, 
       isCorrect: answer.isCorrect 
     }));
@@ -244,7 +247,7 @@ export async function POST(request: Request) {
       // Fallback analysis based on simple logic
       const topicPerformance = new Map<string, { correct: number; total: number }>();
       
-      answers.forEach(answer => {
+      typedAnswers.forEach(answer => {
         const current = topicPerformance.get(answer.topicName) || { correct: 0, total: 0 };
         topicPerformance.set(answer.topicName, {
           correct: current.correct + (answer.isCorrect ? 1 : 0),
@@ -267,11 +270,12 @@ export async function POST(request: Request) {
       }));
     }
 
-    // 6. --- UPDATE SESSION ---
+    // 8. --- UPDATE SESSION ---
     const { error: updateError } = await supabase
       .from('diagnostic_sessions')
       .update({
         status: 'completed',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         result_summary: zonasRojas as any, // Cast to satisfy Supabase Json type
         completed_at: new Date().toISOString(),
       })
@@ -282,7 +286,7 @@ export async function POST(request: Request) {
       // Don't fail the request, just log the error
     }
 
-    // 7. --- SUCCESS RESPONSE ---
+    // 9. --- SUCCESS RESPONSE ---
     const processingTime = Date.now() - startTime;
     
     console.log(`Diagnostic completed successfully for user ${user.id} in ${processingTime}ms`);

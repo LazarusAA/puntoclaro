@@ -3,12 +3,12 @@ import { NextResponse } from 'next/server'
 
 export async function GET(
   request: Request,
-  { params }: { params: { topicId: string } }
+  { params }: { params: Promise<{ topicId: string }> }
 ) {
   const supabase = await createClient()
 
   try {
-    const { topicId } = params;
+    const { topicId } = await params;
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -53,19 +53,18 @@ export async function GET(
     );
 
     // Priority 1: Questions the user has answered incorrectly
-    let selectedQuestions = allQuestions.filter(q => answeredIncorrectlyIds.has(q.id));
+    const incorrectQuestions = allQuestions.filter(q => answeredIncorrectlyIds.has(q.id));
     
     // Priority 2: Questions the user has never seen
     const unseenQuestions = allQuestions.filter(q => 
       !answeredCorrectlyIds.has(q.id) && !answeredIncorrectlyIds.has(q.id)
     );
-    selectedQuestions.push(...unseenQuestions);
 
-    // Priority 3: If we still need more, add questions they got right (for review)
-    if (selectedQuestions.length < 5) {
-      const correctQuestions = allQuestions.filter(q => answeredCorrectlyIds.has(q.id));
-      selectedQuestions.push(...correctQuestions);
-    }
+    // Priority 3: Questions they got right (for review)
+    const correctQuestions = allQuestions.filter(q => answeredCorrectlyIds.has(q.id));
+    
+    // Combine all questions in priority order
+    const selectedQuestions = [...incorrectQuestions, ...unseenQuestions, ...correctQuestions];
 
     // Shuffle and take the first 5 questions for the practice session
     const practiceQuiz = selectedQuestions

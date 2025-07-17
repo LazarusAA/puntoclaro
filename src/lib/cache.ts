@@ -1,37 +1,29 @@
 // Simple in-memory cache for diagnostic questions
 // In production, consider using Redis or a more sophisticated caching solution
 
-interface CacheItem<T> {
-  data: T;
-  timestamp: number;
-  expiresAt: number;
+interface CacheItem<T = unknown> {
+  value: T;
+  expiry: number;
 }
 
 class SimpleCache {
-  private cache = new Map<string, CacheItem<any>>();
-  private readonly defaultTtl = 5 * 60 * 1000; // 5 minutes
+  private cache = new Map<string, CacheItem>();
 
-  set<T>(key: string, data: T, ttl: number = this.defaultTtl): void {
-    const now = Date.now();
-    this.cache.set(key, {
-      data,
-      timestamp: now,
-      expiresAt: now + ttl
-    });
+  set<T>(key: string, value: T, ttlMs: number = 5 * 60 * 1000): void {
+    const expiry = Date.now() + ttlMs;
+    this.cache.set(key, { value, expiry });
   }
 
   get<T>(key: string): T | null {
     const item = this.cache.get(key);
-    
     if (!item) return null;
     
-    // Check if expired
-    if (Date.now() > item.expiresAt) {
+    if (Date.now() > item.expiry) {
       this.cache.delete(key);
       return null;
     }
     
-    return item.data as T;
+    return item.value as T;
   }
 
   delete(key: string): boolean {
@@ -46,7 +38,7 @@ class SimpleCache {
   cleanup(): void {
     const now = Date.now();
     for (const [key, item] of this.cache.entries()) {
-      if (now > item.expiresAt) {
+      if (now > item.expiry) {
         this.cache.delete(key);
       }
     }
@@ -59,7 +51,7 @@ class SimpleCache {
     let active = 0;
     
     for (const item of this.cache.values()) {
-      if (now > item.expiresAt) {
+      if (now > item.expiry) {
         expired++;
       } else {
         active++;

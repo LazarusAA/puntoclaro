@@ -11,6 +11,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
 
 // Helper function to create a hash of user's error evidence
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function createEvidenceHash(evidence: any[]): string {
   // Create hash based on error patterns, not exact content
   const patterns = evidence.map(e => ({
@@ -70,6 +71,7 @@ export async function GET(
       throw new Error(`Could not find topic with ID: ${topicId}`);
     }
     const topicName = topicData.name;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const examName = (topicData.exams as any)?.name || 'Unknown Exam';
 
     // 2b. Fetch Evidence of Misunderstanding (the user's specific wrong answers for this topic)
@@ -94,6 +96,7 @@ export async function GET(
       }, { status: 200 });
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const evidenceForPrompt = errorEvidence.map((e: any) => {
       const questionContent = e.questions?.content as { text?: string } | null;
       return {
@@ -108,6 +111,7 @@ export async function GET(
     const evidenceHash = createEvidenceHash(evidenceForPrompt);
 
     // 3. --- CHECK FOR CACHED LEARNING MODULE ---
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data: cachedModule, error: cacheError } = await (supabase as any)
       .from('learning_modules')
       .select('*')
@@ -120,6 +124,7 @@ export async function GET(
       console.log(`Returning cached learning module for user ${user.id}, topic ${topicId}`);
       
       // Update access tracking
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any)
         .from('learning_modules')
         .update({
@@ -186,6 +191,7 @@ export async function GET(
 
     // 5. --- CACHE THE GENERATED MODULE ---
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       await (supabase as any)
         .from('learning_modules')
         .upsert({

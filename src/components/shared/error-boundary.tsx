@@ -107,16 +107,15 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 export function DiagnosticErrorBoundary({ children }: { children: React.ReactNode }) {
   return (
     <ErrorBoundary
-      onError={(error, errorInfo) => {
+      onError={() => {
         // Additional logging for diagnostic-specific errors
         console.error('Diagnostic Error:', {
-          error: error.message,
           timestamp: new Date().toISOString(),
           userAgent: navigator.userAgent,
           url: window.location.href
         });
       }}
-      fallback={({ error, retry }) => (
+      fallback={({ retry }) => (
         <Card className="w-full max-w-lg mx-auto animate-in fade-in-50 duration-500">
           <CardHeader className="text-center">
             <CardTitle className="text-xl text-red-600">

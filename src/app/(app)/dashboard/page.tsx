@@ -12,10 +12,11 @@ export default function DashboardPage() {
   const supabase = createClient()
   const router = useRouter()
   const [user, setUser] = useState<User | null>(null)
-  const [zonasRojas, setZonasRojas] = useState<any[]>([])
+  const [zonasRojas, setZonasRojas] = useState<unknown[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [isPaywallOpen, setIsPaywallOpen] = useState(false)
+  const [loadingZonaRoja, setLoadingZonaRoja] = useState<string | null>(null)
   
   // Get safe user data with validation
   const safeUserData = useSafeUserData(user)
@@ -51,7 +52,14 @@ export default function DashboardPage() {
       // The result_summary from the DB is the array of Zonas Rojas
       if (data.result_summary && Array.isArray(data.result_summary)) {
         // Map topic titles to topic IDs
-        const topicTitles = data.result_summary.map((zona: any) => zona.title).filter(Boolean)
+        const topicTitles = data.result_summary
+          .map((zona: unknown) => {
+            if (zona && typeof zona === 'object' && 'title' in zona) {
+              return zona.title as string;
+            }
+            return null;
+          })
+          .filter((title): title is string => Boolean(title))
         
         // Fetch topic IDs for the zona roja titles
         const { data: topicsData, error: topicsError } = await supabase
@@ -69,11 +77,16 @@ export default function DashboardPage() {
         )
         
         // Add isLocked property and topic IDs to the results
-        const resultsWithLockStateAndIds = data.result_summary.map((zona: any, index: number) => ({
-          ...(zona || {}),
-          isLocked: index > 0, // The first one is unlocked, the rest are locked
-          topicId: topicNameToId.get(zona.title) || null,
-        }))
+        const resultsWithLockStateAndIds = data.result_summary.map((zona: unknown, index: number) => {
+          if (zona && typeof zona === 'object' && 'title' in zona) {
+            return {
+              ...zona,
+              isLocked: index > 0, // The first one is unlocked, the rest are locked
+              topicId: topicNameToId.get(zona.title as string) || null,
+            };
+          }
+          return null;
+        }).filter(Boolean)
         
         setZonasRojas(resultsWithLockStateAndIds)
       }
@@ -83,12 +96,21 @@ export default function DashboardPage() {
     getSessionData()
   }, [supabase])
 
-  const handleCardClick = (isLocked: boolean, title: string, topicId?: string) => {
+  const handleCardClick = async (isLocked: boolean, title: string, topicId?: string | null) => {
     if (isLocked) {
       setIsPaywallOpen(true);
     } else if (topicId) {
-      // Navigate to the learning page with the topic ID
-      router.push(`/learn/${topicId}`);
+      // Set loading state for this specific zona roja
+      setLoadingZonaRoja(title);
+      
+      try {
+        // Navigate to the learning page with the topic ID
+        router.push(`/learn/${topicId}`);
+      } catch {
+        // Reset loading state if navigation fails
+        setLoadingZonaRoja(null);
+        setError('Error al navegar al módulo de estudio.');
+      }
     } else {
       // Fallback if no topic ID is found
       setError(`No se pudo encontrar el ID del tema para "${title}". Por favor, contacta soporte.`);
@@ -115,15 +137,27 @@ export default function DashboardPage() {
             <p className="text-red-500">{error}</p>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {zonasRojas.map((zona) => (
-                <ZonaRojaCard
-                  key={zona.title}
-                  title={zona.title}
-                  description={zona.description}
-                  isLocked={zona.isLocked}
-                  onClick={() => handleCardClick(zona.isLocked, zona.title, zona.topicId)}
-                />
-              ))}
+              {zonasRojas.map((zona) => {
+                if (!zona || typeof zona !== 'object') return null;
+                
+                const zonaObj = zona as { 
+                  title: string; 
+                  description: string; 
+                  isLocked: boolean; 
+                  topicId: string | null 
+                };
+                
+                return (
+                  <ZonaRojaCard
+                    key={zonaObj.title}
+                    title={zonaObj.title}
+                    description={zonaObj.description}
+                    isLocked={zonaObj.isLocked}
+                    isLoading={loadingZonaRoja === zonaObj.title}
+                    onClick={() => handleCardClick(zonaObj.isLocked, zonaObj.title, zonaObj.topicId ?? undefined)}
+                  />
+                );
+              })}
             </div>
           )}
         </div>

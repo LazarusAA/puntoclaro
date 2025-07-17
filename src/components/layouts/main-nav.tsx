@@ -1,8 +1,6 @@
 
 import { Book, Menu, Sunset, Trees, Zap } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import type { User } from '@supabase/supabase-js'
 
 import {
   Accordion,

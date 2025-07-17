@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Button } from '~/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card'
 import { Progress } from '~/components/ui/progress'
@@ -26,7 +26,7 @@ export function DiagnosticQuiz({ questions, onComplete, isLoading = false, isSub
     setStartTime(Date.now());
   }, [questions]);
 
-  const handleAnswerClick = (optionId: string) => {
+  const handleAnswerClick = useCallback((optionId: string) => {
     if (isLoading || isSubmitting || !questions.length) return;
     
     const currentQuestion = questions[currentQuestionIndex];
@@ -64,7 +64,7 @@ export function DiagnosticQuiz({ questions, onComplete, isLoading = false, isSub
         onComplete(newAnswers);
       }, 10); // Small delay to ensure state update and re-render
     }
-  };
+  }, [isLoading, isSubmitting, questions, currentQuestionIndex, startTime, userAnswers, onComplete]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -83,7 +83,7 @@ export function DiagnosticQuiz({ questions, onComplete, isLoading = false, isSub
 
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [currentQuestionIndex, questions, isLoading, isSubmitting]);
+  }, [currentQuestionIndex, questions, isLoading, isSubmitting, handleAnswerClick]);
 
   // Loading state
   if (!questions || questions.length === 0) {

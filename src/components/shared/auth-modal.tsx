@@ -67,7 +67,7 @@ const LoginForm = () => {
       if (error) {
         // Log the actual error for debugging
         console.error('Supabase login error:', error)
-        logAuthError(error, 'email_login', email)
+        logAuthError(error, 'email_login')
         
         // Handle specific Supabase auth errors with user-friendly Spanish messages
         const errorMessage = error.message.toLowerCase()
@@ -93,7 +93,7 @@ const LoginForm = () => {
       
     } catch (err) {
       setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
-      logAuthError(err, 'email_login', email)
+      logAuthError(err, 'email_login')
     } finally {
       setIsLoading(false)
     }
@@ -225,7 +225,7 @@ const SignupForm = () => {
       setIsLoading(true)
       setError(null)
       
-      const { data, error } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email: email.trim(),
         password,
       })
@@ -233,7 +233,7 @@ const SignupForm = () => {
       if (error) {
         // Log the actual error for debugging
         console.error('Supabase signup error:', error)
-        logAuthError(error, 'email_signup', email)
+        logAuthError(error, 'email_signup')
         
         // Handle specific Supabase auth errors with user-friendly Spanish messages
         const errorMessage = error.message.toLowerCase()
@@ -268,7 +268,7 @@ const SignupForm = () => {
       
     } catch (err) {
       setError('Error de conexión. Verifica tu internet e intenta de nuevo.')
-      logAuthError(err, 'email_signup', email)
+      logAuthError(err, 'email_signup')
     } finally {
       setIsLoading(false)
     }

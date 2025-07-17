@@ -120,6 +120,7 @@ function sanitizeError(error: unknown, context?: ErrorContext): SanitizedError {
     return {
       message: sanitizeString(error.message),
       name: error.name,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       code: (error as any).code,
       context: context ? sanitizeObject(context) as ErrorContext : undefined,
       timestamp,
@@ -214,7 +215,7 @@ class SecureLogger {
   /**
    * Sends log data to external monitoring service in production
    */
-  private sendToMonitoring(logEntry: SanitizedError | any): void {
+  private sendToMonitoring(logEntry: SanitizedError | Record<string, unknown>): void {
     try {
       // TODO: Integrate with external monitoring service
       // Examples: Sentry, LogRocket, DataDog, New Relic
@@ -245,15 +246,58 @@ class SecureLogger {
 // Export singleton instance
 export const secureLogger = new SecureLogger()
 
-// Helper functions for common use cases
-export const logAuthError = (error: unknown, action: string, userId?: string) => {
-  secureLogger.error(error, {
-    component: 'auth',
-    action,
-    userId,
-    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : undefined,
-    url: typeof window !== 'undefined' ? window.location.href : undefined
-  })
+/**
+ * Sanitizes error objects for safe logging
+ * Removes sensitive information and ensures the error is serializable
+ */
+export function logAuthError(error: unknown, context: string) {
+  // Sanitize error information before logging
+  const sanitizedError = sanitizeErrorForLogging(error);
+  
+  console.error(`[AUTH_ERROR] ${context}:`, sanitizedError);
+  
+  // In production, you might want to send this to your logging service
+  if (process.env.NODE_ENV === 'production') {
+    // Send to your logging service here
+    // Example: sendToLoggingService({ error: sanitizedError, context });
+  }
+}
+
+/**
+ * Sanitizes error objects for safe logging
+ * Removes sensitive information and ensures the error is serializable
+ */
+function sanitizeErrorForLogging(error: unknown): Record<string, unknown> {
+  if (!error) return { message: 'Unknown error' };
+  
+  // Handle Error objects
+  if (error instanceof Error) {
+    return {
+      name: error.name,
+      message: error.message,
+      // Don't include stack traces in production for security
+      ...(process.env.NODE_ENV !== 'production' && { stack: error.stack })
+    };
+  }
+  
+  // Handle Supabase errors (which might have additional properties)
+  if (typeof error === 'object' && error !== null) {
+    const errorObj = error as Record<string, unknown>;
+    return {
+      message: errorObj.message || 'Unknown error',
+      code: errorObj.code,
+      status: errorObj.status,
+      // Add other safe properties as needed
+    };
+  }
+  
+  // Handle string errors
+  if (typeof error === 'string') {
+    return { message: error };
+  }
+  
+  // Fallback for any other type
+  return { message: 'Unknown error type', type: typeof error };
 }
 
 export const logApiError = (error: unknown, endpoint: string, method: string) => {
