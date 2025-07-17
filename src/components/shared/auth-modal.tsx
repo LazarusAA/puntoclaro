@@ -345,6 +345,10 @@ interface AuthModalProps {
   trigger?: React.ReactNode
   /** Custom trigger element (use trigger OR children, not both) */
   children?: React.ReactNode
+  /** Controlled state - whether the modal is open */
+  isOpen?: boolean
+  /** Controlled state - callback when modal should close */
+  onClose?: () => void
 }
 
 /**
@@ -353,11 +357,16 @@ interface AuthModalProps {
  * @param defaultTab - Which tab to show initially ('login' | 'signup')
  * @param trigger - Custom trigger element to open the modal
  * @param children - Alternative way to pass custom trigger element
+ * @param isOpen - Controlled state for modal visibility
+ * @param onClose - Callback when modal should close
  * 
  * @example
  * ```tsx
- * // Basic usage
+ * // Basic usage with trigger
  * <AuthModal />
+ * 
+ * // Controlled usage
+ * <AuthModal isOpen={isOpen} onClose={() => setIsOpen(false)} />
  * 
  * // Open to signup tab
  * <AuthModal defaultTab="signup" />
@@ -369,10 +378,68 @@ interface AuthModalProps {
 export function AuthModal({ 
   defaultTab = 'login', 
   trigger,
-  children 
+  children,
+  isOpen,
+  onClose
 }: AuthModalProps) {
   const [activeTab, setActiveTab] = useState<'login' | 'signup'>(defaultTab)
 
+  // If controlled props are provided, use controlled mode
+  const isControlled = isOpen !== undefined && onClose !== undefined
+
+  if (isControlled) {
+    return (
+      <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-center">Bienvenido a Umbral</DialogTitle>
+            <DialogDescription className="text-center pt-2">
+              Tu camino hacia la confianza empieza aquí.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="w-full">
+            <div className="rounded-lg bg-gray-200 p-1 mb-6 dark:bg-zinc-800 flex">
+              <AnimatedBackground
+                defaultValue={defaultTab}
+                className="rounded-md bg-white shadow-sm dark:bg-zinc-700"
+                transition={{
+                  ease: 'easeInOut',
+                  duration: 0.2,
+                }}
+                onValueChange={(value) => {
+                  const validTab = value === 'login' || value === 'signup' ? value : 'login'
+                  setActiveTab(validTab)
+                }}
+              >
+                {[
+                  { id: 'login', label: 'Iniciar Sesión' },
+                  { id: 'signup', label: 'Registrarse' }
+                ].map((tab) => (
+                  <button
+                    key={tab.id}
+                    data-id={tab.id}
+                    type="button"
+                    className="flex-1 flex items-center justify-center px-4 py-2.5 text-sm font-medium text-gray-700 transition-transform active:scale-[0.98] dark:text-gray-200 min-w-0"
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </AnimatedBackground>
+            </div>
+
+            <div className="pt-2">
+              {activeTab === 'login' && <LoginForm />}
+              {activeTab === 'signup' && <SignupForm />}
+            </div>
+          </div>
+          
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
+  // Original trigger-based mode for backward compatibility
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -414,7 +481,7 @@ export function AuthModal({
                 >
                   {tab.label}
                 </button>
-              ))}
+                ))}
             </AnimatedBackground>
           </div>
 
