@@ -220,13 +220,18 @@ export async function POST(request: Request) {
     let zonasRojas: DiagnosticZonaRoja[];
     
     try {
+      console.log('Starting AI analysis with data:', JSON.stringify(analysisData, null, 2))
       const result = await model.generateContent(analysisPrompt);
       const response = result.response;
       const text = response.text();
       
+      console.log('AI response text:', text)
+      
       // Clean and parse the JSON response from the AI
       const cleanedText = text.replace(/```json|```/g, '').trim();
       zonasRojas = JSON.parse(cleanedText);
+      
+      console.log('Parsed zonasRojas from AI:', JSON.stringify(zonasRojas, null, 2))
       
       // Validate AI response
       if (!Array.isArray(zonasRojas) || zonasRojas.length !== 3) {
@@ -241,19 +246,42 @@ export async function POST(request: Request) {
           throw new Error('Invalid zona roja format');
         }
       }
+      
+      console.log('AI analysis completed successfully')
     } catch (aiError) {
       console.error('AI analysis failed:', aiError);
       
       // Fallback analysis based on simple logic
+      console.log('Using fallback analysis with answers:', JSON.stringify(typedAnswers, null, 2))
+      
+      // Validate that we have answers to work with
+      if (!typedAnswers || typedAnswers.length === 0) {
+        console.error('No answers available for fallback analysis')
+        throw new Error('No answers available for analysis')
+      }
+      
       const topicPerformance = new Map<string, { correct: number; total: number }>();
       
       typedAnswers.forEach(answer => {
+        if (!answer.topicName) {
+          console.warn('Answer missing topicName:', answer)
+          return // Skip answers without topic names
+        }
+        
         const current = topicPerformance.get(answer.topicName) || { correct: 0, total: 0 };
         topicPerformance.set(answer.topicName, {
           correct: current.correct + (answer.isCorrect ? 1 : 0),
           total: current.total + 1
         });
       });
+      
+      console.log('Topic performance map:', Object.fromEntries(topicPerformance))
+      
+      // Check if we have any topics
+      if (topicPerformance.size === 0) {
+        console.error('No valid topics found in answers')
+        throw new Error('No valid topics found in answers')
+      }
       
       // Sort by worst performance
       const sortedTopics = Array.from(topicPerformance.entries())
@@ -264,13 +292,45 @@ export async function POST(request: Request) {
         .sort((a, b) => a.percentage - b.percentage)
         .slice(0, 3);
       
-      zonasRojas = sortedTopics.map(({ topic }) => ({
+      console.log('Sorted topics for fallback:', sortedTopics)
+      
+      // Ensure we have at least 3 topics (or use all available)
+      const topicsToUse = sortedTopics.length >= 3 ? sortedTopics : Array.from(topicPerformance.keys()).map(topic => ({ topic, percentage: 0.5 }))
+      
+      zonasRojas = topicsToUse.map(({ topic }) => ({
         title: topic,
         description: `Enfócate en mejorar tus habilidades en ${topic} para obtener mejores resultados.`
       }));
+      
+      console.log('Fallback zonasRojas generated:', JSON.stringify(zonasRojas, null, 2))
     }
 
     // 8. --- UPDATE SESSION ---
+    console.log('About to update session with zonasRojas:', JSON.stringify(zonasRojas, null, 2))
+    
+    // Safety check: ensure zonasRojas is valid
+    if (!zonasRojas || !Array.isArray(zonasRojas) || zonasRojas.length === 0) {
+      console.error('zonasRojas is invalid, using emergency fallback')
+      
+      // Emergency fallback: use generic zonas rojas
+      zonasRojas = [
+        {
+          title: "Razonamiento Lógico",
+          description: "Mejorar tu capacidad de análisis lógico es fundamental para el éxito en el examen."
+        },
+        {
+          title: "Comprensión de Lectura", 
+          description: "Desarrollar habilidades de lectura crítica te ayudará en todas las secciones."
+        },
+        {
+          title: "Resolución de Problemas",
+          description: "Practicar la resolución sistemática de problemas aumentará tu confianza."
+        }
+      ]
+      
+      console.log('Emergency fallback zonasRojas:', JSON.stringify(zonasRojas, null, 2))
+    }
+    
     const { error: updateError } = await supabase
       .from('diagnostic_sessions')
       .update({
@@ -284,6 +344,8 @@ export async function POST(request: Request) {
     if (updateError) {
       console.error('Session update failed:', updateError);
       // Don't fail the request, just log the error
+    } else {
+      console.log('Session updated successfully with result_summary')
     }
 
     // 9. --- SUCCESS RESPONSE ---

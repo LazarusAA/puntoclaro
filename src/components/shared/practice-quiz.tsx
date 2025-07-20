@@ -17,6 +17,14 @@ type PracticeQuestion = {
   rationale: string
 }
 
+// Define the shape of a tracked answer
+type TrackedAnswer = {
+  questionId: string
+  selectedOptionId: string
+  isCorrect: boolean
+  responseTimeMs: number
+}
+
 type PracticeQuizProps = {
   topicId: string
 }
@@ -31,6 +39,11 @@ export function PracticeQuiz({ topicId }: PracticeQuizProps) {
   const [selectedOption, setSelectedOption] = useState<string | null>(null)
   const [isCompleted, setIsCompleted] = useState(false)
   const [showScorePulse, setShowScorePulse] = useState(false)
+  
+  // Track answers for submission
+  const [trackedAnswers, setTrackedAnswers] = useState<TrackedAnswer[]>([])
+  const [questionStartTime, setQuestionStartTime] = useState<number>(Date.now())
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const fetchPracticeQuiz = useCallback(async () => {
     setIsLoading(true)
@@ -45,6 +58,9 @@ export function PracticeQuiz({ topicId }: PracticeQuizProps) {
         throw new Error('No hay preguntas de práctica disponibles para este tema en este momento.')
       }
       setQuestions(data.practiceQuestions)
+      // Reset tracking state for new quiz
+      setTrackedAnswers([])
+      setQuestionStartTime(Date.now())
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Ocurrió un error desconocido.')
     } finally {
@@ -56,10 +72,29 @@ export function PracticeQuiz({ topicId }: PracticeQuizProps) {
     fetchPracticeQuiz()
   }, [fetchPracticeQuiz])
 
+  // Reset question timer when moving to next question
+  useEffect(() => {
+    setQuestionStartTime(Date.now())
+  }, [currentQuestionIndex])
+
   const handleOptionSelect = (optionId: string) => {
     if (selectedOption) return // Prevent changing answer
+    
+    const responseTime = Date.now() - questionStartTime
+    const isCorrect = optionId === currentQuestion.correctOptionId
+    
+    // Track this answer
+    const answer: TrackedAnswer = {
+      questionId: currentQuestion.id,
+      selectedOptionId: optionId,
+      isCorrect,
+      responseTimeMs: responseTime
+    }
+    
+    setTrackedAnswers(prev => [...prev, answer])
     setSelectedOption(optionId)
-    if (optionId === currentQuestion.correctOptionId) {
+    
+    if (isCorrect) {
       setScore(score + 1)
       setShowScorePulse(true)
       setTimeout(() => setShowScorePulse(false), 600)
@@ -75,12 +110,49 @@ export function PracticeQuiz({ topicId }: PracticeQuizProps) {
     }
   }
 
+  const submitPracticeResults = useCallback(async () => {
+    if (trackedAnswers.length === 0) return
+    
+    setIsSubmitting(true)
+    try {
+      const response = await fetch(`/api/practice/${topicId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          answers: trackedAnswers,
+          topicId
+        }),
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        console.error('Failed to save practice results:', errorData)
+        // Don't throw error - user can still see their results
+      }
+    } catch (error) {
+      console.error('Error submitting practice results:', error)
+      // Don't throw error - user can still see their results
+    } finally {
+      setIsSubmitting(false)
+    }
+  }, [trackedAnswers, topicId])
+
+  // Submit results when quiz is completed
+  useEffect(() => {
+    if (isCompleted && trackedAnswers.length > 0) {
+      submitPracticeResults()
+    }
+  }, [isCompleted, trackedAnswers.length, submitPracticeResults])
+
   const handleRestart = () => {
     setCurrentQuestionIndex(0)
     setScore(0)
     setSelectedOption(null)
     setShowScorePulse(false)
     setIsCompleted(false)
+    setTrackedAnswers([])
     // Refetch new set of questions for a fresh practice session
     fetchPracticeQuiz()
   }
@@ -119,9 +191,14 @@ export function PracticeQuiz({ topicId }: PracticeQuizProps) {
               ? '¡Increíble! Dominaste completamente el razonamiento deductivo.' 
               : '¡Excelente trabajo! La práctica constante es la clave.'}
           </p>
+          {isSubmitting && (
+            <p className="text-sm text-blue-600 mt-2">
+              Guardando tus resultados...
+            </p>
+          )}
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button onClick={handleRestart}>
+          <Button onClick={handleRestart} disabled={isSubmitting}>
             <RefreshCw className="mr-2 h-4 w-4" />
             Reintentar Práctica
           </Button>

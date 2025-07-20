@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback } from 'react'
 import { createClient } from '~/lib/supabase/client'
 import type { User } from '@supabase/supabase-js'
 import { logAuthError } from '~/lib/secure-logger'
@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [sessionExpired, setSessionExpired] = useState(false)
 
-  const refreshSession = async () => {
+  const refreshSession = useCallback(async () => {
     try {
       const { data: { session }, error } = await supabase.auth.refreshSession()
       
@@ -42,7 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSessionExpired(true)
       setUser(null)
     }
-  }
+  }, [supabase.auth])
 
   useEffect(() => {
     let refreshTimer: NodeJS.Timeout | null = null
@@ -119,7 +119,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearTimeout(refreshTimer)
       }
     }
-  }, [supabase.auth])
+  }, [supabase.auth, refreshSession])
 
   const signOut = async () => {
     try {
