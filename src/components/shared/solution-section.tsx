@@ -9,19 +9,19 @@ export const SolutionSection = () => {
     {
       number: "1",
       title: "Responde 10 preguntas",
-      description: "Nuestro 'Lightning Diagnostic' analiza tus respuestas para encontrar tu patrón de errores, no solo si la tuviste buena o mala.",
+      description: "Respondé 10 preguntas clave. En segundos, encontramos tu patrón de errores. No te hacemos perder el tiempo.",
       icon: <Target className="size-8 text-primary" />
     },
     {
       number: "2", 
       title: "Recibe tus 3 Zonas Rojas",
-      description: "Te mostramos las 3 áreas exactas donde cada minuto de estudio te dará el máximo resultado. Sin distracciones. Sin materia de relleno.",
+      description: "Te mostramos las 3 áreas exactas donde tenés que enfocar tu esfuerzo de último minuto para el máximo impacto.",
       icon: <CheckCircle className="size-8 text-primary" />
     },
     {
       number: "3",
-      title: "Domina un tema, GRATIS",
-      description: "Te damos una Micro-Dosis de Estudio y un Machote en PDF para que domines tu primera Zona Roja y veas lo fácil que puede ser.",
+      title: "Domina un tema ¡YA!",
+      description: "Con nuestra Micro-Dosis y el Machote en PDF, sentí el alivio inmediato de ver que podés mejorar rápido.",
       icon: <BookOpen className="size-8 text-primary" />
     }
   ];

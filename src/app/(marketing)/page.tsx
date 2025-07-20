@@ -11,8 +11,8 @@ const structuredData = {
   "@type": "EducationalOrganization",
   "name": "Umbral",
   "description": "Plataforma de preparación para la PAA con diagnósticos personalizados",
-  "url": "https://umbral.cr", // Replace with your domain
-  "logo": "https://umbral.cr/logo.svg", // Replace with your domain
+  "url": "https://www.somosumbral.com", // Replace with your domain
+  "logo": "https://www.somosumbral.com/logo.svg", // Replace with your domain
   "sameAs": [
     // Add your social media URLs here when available
     // "https://facebook.com/umbral",
@@ -91,7 +91,7 @@ export default function LandingPage() {
 
         {/* Testimonial Section */}
         <Testimonial10 
-          quote="Esos exámenes son más de aptitud que de conocimiento... la mejor forma de prepararse es hacer mucha, pero mucha práctica, porque un gran componente es tu capacidad de manejar tu propio tiempo y estrés."
+          quote="Estos exámenes son más de aptitud que de conocimiento... la mejor forma de prepararse es hacer mucha, pero mucha práctica, porque un gran componente es tu capacidad de manejar tu propio tiempo y estrés."
           author={{
             name: "Alvaro Lazarus",
             role: "Founder & CEO",
@@ -104,11 +104,11 @@ export default function LandingPage() {
 
         {/* Final CTA Section */}
         <Cta10 
-          heading="Tu futuro empieza hoy"
-          description="Deja la ansiedad. Toma el control. Descubre tus Zonas Rojas."
+          heading="Aprovechá al máximo el tiempo que te queda"
+          description="Dejá el pánico. Un plan enfocado es más poderoso que semanas de estudio a ciegas. Descubrí tus Zonas Rojas y hacé que cada día de aquí al examen de verdad cuente."
           buttons={{
             primary: {
-              text: "Empezar mi Diagnóstico GRATIS",
+              text: "Optimizar mi estudio ¡YA!",
               url: "/diagnostic"
             }
           }}

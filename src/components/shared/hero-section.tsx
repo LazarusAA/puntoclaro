@@ -41,7 +41,7 @@ const Hero12 = () => {
                   ¿La <span className="text-primary">jupa nublada</span> por el examen de admisión?
                 </h1>
                 <p className="mx-auto max-w-2xl md:max-w-3xl text-lg md:text-xl text-muted-foreground leading-relaxed">
-                  Deja de estudiar a ciegas. Descubre gratis en 90 segundos cuáles son las 3 áreas que de verdad necesitas mejorar para asegurar tu futuro con la PAA.
+                Deja de estudiar a ciegas. Nuestro diagnóstico GRATIS te dice en 90 segundos <strong>exactamente</strong> qué repasar para maximizar tus puntos. <strong>Aún estás a tiempo</strong>.
                 </p>
               </div>
             </AnimateOnScroll>
