@@ -10,6 +10,7 @@ import {
 } from '~/components/ui/dialog'
 import { CheckCircle, Lock, Star } from 'lucide-react'
 import { ShineBorder } from '~/components/magicui/shine-border'
+import { useState } from 'react'
 
 // The feature list is rewritten to be scannable and benefit-oriented.
 const features = [
@@ -25,10 +26,26 @@ type PaywallModalProps = {
 }
 
 export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
-  const handleUpgrade = () => {
-    // This will trigger the Stripe Checkout flow.
-    alert('Redirecting to payment...')
-    onClose()
+  const [isLoading, setIsLoading] = useState(false)
+
+  const handleUpgrade = async () => {
+    setIsLoading(true)
+    try {
+      const response = await fetch('/api/checkout', { method: 'POST' })
+      const { checkoutUrl, error } = await response.json()
+
+      if (error || !checkoutUrl) {
+        throw new Error(error || 'Could not create checkout session.')
+      }
+      
+      // Redirect the user to the Lemon Squeezy checkout page
+      window.location.href = checkoutUrl;
+
+    } catch (error) {
+      console.error('Payment Error:', error)
+      alert('Ocurrió un error al procesar el pago.')
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -88,6 +105,7 @@ export function PaywallModal({ isOpen, onClose }: PaywallModalProps) {
             size="lg"
             className="w-full text-lg h-14 font-bold mb-2"
             onClick={handleUpgrade}
+            disabled={isLoading}
           >
             Obtener acceso ilimitado
           </Button>
